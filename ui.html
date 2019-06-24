@@ -12,31 +12,84 @@
 	p.type { margin-bottom: 16px; }
 	p.type--11-pos-bold { margin-bottom: 8px; }
 
-	.item { display: flex; }
-	.item .icon { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; }
-	.item p { margin-bottom: 0; display: flex; }
+	.search { display: block; position: relative; }
+	.search .icon { position: absolute; left: 0; top: -1px; }
+	.search .input { text-indent: 24px; }
+	.list { max-height: 300px; overflow: auto; background: #F5F5F5; margin: 16px -16px 0; border: solid 1px #D5D5D5; border-left: none; border-right: none; }
+	.item { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; cursor: pointer; padding: 0 16px; }
+	.item * { pointer-events: none; }
+	.item .icon { flex-shrink: 0; opacity: 0; margin-right: 8px; }
+	.item p { margin-bottom: 0; padding: 4px 0; }
+
+	.item:hover { background: rgba(72, 159, 244, 0.2); }
+	.item.selected p { color: #2C84DB; }
+	.item.selected .icon { opacity: 1; }
 </style>
 <form id="form">
 	<p class="type type--11-pos-medium">
 		Content Buddy searches for all the different text contents used in your selection and helps you to replace it quickly.
 	</p>
 
-	<p class="type type--11-pos-bold">Fee input</p>
-	<input id="match" type="text" class="input" placeholder="Match">
-	<input id="replace" type="text" class="input" placeholder="Replace">
-
-	<p class="type type--11-pos-bold">Select a unique content</p>
 	<fieldset>
-		<ul id="uniques"></ul>
+		<label class="switch">
+			<div class="switch__container">
+				<input id="free_match_check" type="checkbox" class="switch__checkbox">
+				<span class="switch__slider"></span>
+			</div>
+			<div class="switch__label">Free match</div>
+		</label>
 	</fieldset>
 
-	<button type="submit" id="apply" class="button button--primary" disabled>Confirm scale</button>
+	<fieldset id="unique_match">
+		<p class="type type--11-pos-bold">Select your unique content</p>
+		<label class="search">
+			<div class="icon icon--search"></div>
+			<input type="text" name="query" class="input" placeholder="Search uniques">
+		</label>
+		<ul class="list" id="uniques"></ul>
+	</fieldset>
+
+	<fieldset id="free_match" class="hidden">
+		<p class="type type--11-pos-bold">Free match</p>
+		<input id="match" type="text" class="input" placeholder="Match content">
+	</fieldset>
+
+	<section class="main-actions">
+		<fieldset>
+			<p class="type type--11-pos-bold">Replace to</p>
+			<input id="replace" type="text" class="input" placeholder="New content">
+		</fieldset>
+		<button type="submit" id="apply" class="button button--primary" disabled>Replace</button>
+	</section>
 </form>
 
 <script>
 	// PLUGIN UI CONTROLS
+	var check = document.getElementById('free_match_check')
+	var free_match = document.getElementById('free_match')
+	var unique_match = document.getElementById('unique_match')
 	var uniques = document.getElementById('uniques')
 	var form = document.getElementById('apply')
+
+	// Enable/disable free match
+	check.addEventListener('change', e => {
+		var enabled = check.checked
+		if (enabled) {
+			unique_match.classList.add('hidden')
+			free_match.classList.remove('hidden')
+		} else {
+			unique_match.classList.remove('hidden')
+			free_match.classList.add('hidden')
+		}
+	})
+
+	// Click handlers for unique items
+	uniques.addEventListener('click', e => {
+		if (e.target.nodeName == 'LI') {
+			uniques.querySelectorAll('.selected').forEach(node => node.classList.remove('selected'))
+			e.target.classList.toggle('selected')
+		}
+	})
 
 	// Check intial selection
 	parent.postMessage({ pluginMessage: { type: 'pluginReady', options: {} } }, '*')
@@ -49,7 +102,7 @@
 				function item(text) {
 					return `
 						<li class="item" key="${text}">
-							<div class="icon icon--blue"></div>
+							<div class="icon icon--recent icon--blue"></div>
 							<p class="type type--11-pos">${text}</p>
 						</li>
 					`
