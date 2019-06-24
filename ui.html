@@ -136,10 +136,11 @@
 		var msg = event.data.pluginMessage
 		if (msg.type === 'render') {
 			function elem(item, idx) {
+				var key = (item.key == ' ') ? '(Content Buddy: EMPTY NODE)': item.key;
 				return `
-					<li class="item" idx="${idx}" key="${item.key}">
+					<li class="item" idx="${idx}" key="${key}">
 						<div class="icon icon--recent icon--blue"></div>
-						<p class="type type--11-pos">${item.key}</p>
+						<p class="type type--11-pos">${key}</p>
 					</li>
 				`
 			}
