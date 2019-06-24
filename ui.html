@@ -59,7 +59,7 @@
 			<p class="type type--11-pos-bold">Replace to</p>
 			<input id="replace" type="text" class="input" placeholder="New content">
 		</fieldset>
-		<button type="submit" id="apply" class="button button--primary" disabled>Replace</button>
+		<button type="button" id="apply" class="button button--primary" disabled>Replace</button>
 	</section>
 </form>
 
@@ -70,7 +70,9 @@
 	var unique_match = document.getElementById('unique_match')
 	var query = document.getElementById('query')
 	var uniques = document.getElementById('uniques')
-	var form = document.getElementById('apply')
+	var match = document.getElementById('match')
+	var replace = document.getElementById('replace')
+	var apply = document.getElementById('apply')
 
 	// Enable/disable free match
 	check.addEventListener('change', e => {
@@ -89,11 +91,13 @@
 		if (e.target.nodeName == 'LI') {
 			if (e.target.classList.contains('selected')) {
 				e.target.classList.remove('selected')
+				apply.setAttribute('disabled', '')
 				parent.postMessage({ pluginMessage: { type: 'restoreSelection', options: {} } }, '*')
 			} else {
+				var idx = parseInt(e.target.getAttribute('idx'))
 				uniques.querySelectorAll('.selected').forEach(elem => elem.classList.remove('selected'))
 				e.target.classList.add('selected')
-				var idx = parseInt(e.target.getAttribute('idx'))
+				apply.removeAttribute('disabled')
 				parent.postMessage({ pluginMessage: { type: 'previewNodes', options: idx } }, '*')
 			}
 		}
@@ -113,6 +117,19 @@
 			}
 
 		}, 25)
+	})
+
+	// Apply replacements
+	apply.addEventListener('click', e => {
+		var free_match = check.checked
+		if (free_match) {
+			parent.postMessage({ pluginMessage: { type: 'freeMatch', options: { match: match.value, replace: replace.value } } }, '*')
+		} else {
+			if (replace.value !== '' || replace.value === '' && confirm('Replace with empty content?')) {
+				parent.postMessage({ pluginMessage: { type: 'uniqueMatch', options: replace.value } }, '*')
+				replace.value = ''
+			}
+		}
 	})
 
 	onmessage = (e) => {

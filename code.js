@@ -1,6 +1,7 @@
 var MIN_HEIGHT = 480
 var MAX_HEIGHT = 640
 var orderedUniques = []
+var previewNodes = []
 var initialSelection = figma.currentPage.selection.slice(0)
 
 figma.showUI(__html__, { width: 320, height: MAX_HEIGHT });
@@ -43,7 +44,7 @@ figma.ui.onmessage = msg => {
 	if (msg.type === 'previewNodes') {
 		var idx = msg.options
 		var nodes = orderedUniques[idx].nodes
-		var previewNodes = nodes.reduce((buffer, item) => {
+		previewNodes = nodes.reduce((buffer, item) => {
 			 buffer.push(figma.getNodeById(item))
 			 return buffer
 		}, [])
@@ -54,6 +55,26 @@ figma.ui.onmessage = msg => {
 	if (msg.type === 'restoreSelection') {
 		figma.viewport.scrollAndZoomIntoView(initialSelection)
 		figma.currentPage.selection = initialSelection
+	}
+
+	if (msg.type === 'freeMatch') {
+
+	}
+
+	if (msg.type === 'uniqueMatch') {
+		var replacement = msg.options
+		console.log(previewNodes)
+		previewNodes.forEach(node => {
+			var font = null
+			if (typeof node.fontName != 'symbol') {
+				font = node.fontName
+			} else {
+				console.log('isSymbol', node.fontName)
+			}
+			figma.loadFontAsync(font).then(() => {
+				node.characters = replacement
+			})
+		})
 	}
 
 
