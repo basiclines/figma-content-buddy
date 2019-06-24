@@ -18,15 +18,23 @@ figma.ui.onmessage = msg => {
 			}
 		})
 
-		console.log(uniques)
-
 		var orderedUniques = []
 		for (var item in uniques) {
-			console.log(item, uniques[item])
+			orderedUniques.push({ key: item, nodes: uniques[item] })
 		}
+		orderedUniques.sort(function(a, b) {
+			var nameA = a.key.toUpperCase()
+			var nameB = b.key.toUpperCase()
+			if (nameA < nameB) {
+				return -1;
+			}
+			if (nameA > nameB) {
+				return 1;
+			}
+			return 0;
+		})
 
-
-		var message = { type: 'render', uniques: uniques }
+		var message = { type: 'render', uniques: orderedUniques }
 		figma.ui.postMessage(message)
 	}
 

@@ -87,8 +87,12 @@
 	// Click handlers for unique items
 	uniques.addEventListener('click', e => {
 		if (e.target.nodeName == 'LI') {
-			uniques.querySelectorAll('.selected').forEach(elem => elem.classList.remove('selected'))
-			e.target.classList.toggle('selected')
+			if (e.target.classList.contains('selected')) {
+				e.target.classList.remove('selected')
+			} else {
+				uniques.querySelectorAll('.selected').forEach(elem => elem.classList.remove('selected'))
+				e.target.classList.add('selected')
+			}
 		}
 	})
 
@@ -114,19 +118,15 @@
 	onmessage = (e) => {
 		var msg = event.data.pluginMessage
 		if (msg.type === 'render') {
-			var buffer = ''
-			for (var i in msg.uniques) {
-				function item(text) {
-					return `
-						<li class="item" idx="" key="${text}">
-							<div class="icon icon--recent icon--blue"></div>
-							<p class="type type--11-pos">${text}</p>
-						</li>
-					`
-				}
-				buffer += item(i)
-				uniques.innerHTML = buffer
+			function elem(item, idx) {
+				return `
+					<li class="item" idx="${idx}" key="${item.key}">
+						<div class="icon icon--recent icon--blue"></div>
+						<p class="type type--11-pos">${item.key}</p>
+					</li>
+				`
 			}
+			uniques.innerHTML = msg.uniques.reduce((buffer, item, idx) =>  buffer += elem(item, idx),'')
 		}
 	}
 </script>
