@@ -79,20 +79,16 @@ figma.ui.onmessage = msg => {
 
 	if (msg.type === 'uniqueMatch') {
 		var replacement = msg.options
-		console.log(previewNodes)
 		previewNodes.forEach(node => {
 			var font = null
 			if (typeof node.fontName != 'symbol') {
 				font = node.fontName
+				figma.loadFontAsync(font).then(() => {
+					node.characters = replacement
+				})
 			} else {
-				console.log('isSymbol', node.fontName)
+				alert('Mixed content: Content Buddy cannot modify text layers with mixed font properties.')
 			}
-			figma.loadFontAsync(font).then(() => {
-				node.characters = replacement
-			})
 		})
 	}
-
-
-	  // figma.closePlugin();
 }
