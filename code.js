@@ -4,13 +4,29 @@ var orderedUniques = []
 var previewNodes = []
 var initialSelection = figma.currentPage.selection.slice(0)
 
+function getTextNodesFrom(selection) {
+	var nodes = []
+	function childrenIterator(node) {
+		if (node.children) {
+			node.children.forEach(child => {
+			childrenIterator(child)
+		})
+		} else {
+			if (node.type === 'TEXT') nodes.push({ id: node.id, characters: node.characters })
+		}
+	}
+
+	selection.forEach(item => childrenIterator(item))
+	return nodes
+}
+
 figma.showUI(__html__, { width: 320, height: MAX_HEIGHT });
 
 figma.ui.onmessage = msg => {
 
 	if (msg.type === 'pluginReady') {
 		var selection = figma.currentPage.selection
-		var textNodes = figma.currentPage.findAll(n => n.type === 'TEXT')
+		var textNodes = getTextNodesFrom(selection)
 		var uniques = {}
 
 		textNodes.map(item => {
