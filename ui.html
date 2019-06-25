@@ -22,6 +22,7 @@
 	.item p { margin-bottom: 0; padding: 4px 0; }
 
 	.item:hover { background: rgba(72, 159, 244, 0.2); }
+	.item.empty p { color: #888; font-style: italic; }
 	.item.selected p { color: #2C84DB; }
 	.item.selected .icon { opacity: 1; }
 </style>
@@ -30,7 +31,7 @@
 		Content Buddy searches for all the different text contents used in your selection and helps you to replace it quickly.
 	</p>
 
-	<fieldset>
+	<fieldset class="hidden">
 		<label class="switch">
 			<div class="switch__container">
 				<input id="free_match_check" type="checkbox" class="switch__checkbox">
@@ -106,7 +107,7 @@
 	// Search box
 	query.addEventListener('keydown', e => {
 		setTimeout(() => {
-			var value = query.value
+			var value = query.value.toLowerCase()
 			if (value != '') {
 				uniques.querySelectorAll('.item').forEach(elem => {
 					elem.classList.add('hidden')
@@ -136,11 +137,12 @@
 		var msg = event.data.pluginMessage
 		if (msg.type === 'render') {
 			function elem(item, idx) {
-				var key = (item.key == ' ') ? '(Content Buddy: EMPTY NODE)': item.key;
+				var emptyClass = (item.key == ' ') ? 'empty': '';
+				var emptyWord = (item.key == ' ') ? 'Empty layer': item.key;
 				return `
-					<li class="item" idx="${idx}" key="${key}">
+					<li class="item ${emptyClass}" idx="${idx}" key="${item.key.toLowerCase()}">
 						<div class="icon icon--recent icon--blue"></div>
-						<p class="type type--11-pos">${key}</p>
+						<p class="type type--11-pos">${emptyWord}</p>
 					</li>
 				`
 			}

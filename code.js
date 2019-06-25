@@ -1,5 +1,5 @@
 var MIN_HEIGHT = 480
-var MAX_HEIGHT = 640
+var MAX_HEIGHT = 580
 var orderedUniques = []
 var previewNodes = []
 var initialSelection = figma.currentPage.selection.slice(0)
