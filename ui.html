@@ -107,7 +107,7 @@
 	// Search box
 	query.addEventListener('keydown', e => {
 		setTimeout(() => {
-			var value = query.value.toLowerCase()
+			var value = query.value.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 			if (value != '') {
 				uniques.querySelectorAll('.item').forEach(elem => {
 					elem.classList.add('hidden')
