@@ -18,46 +18,48 @@ function getTextNodesFrom(selection) {
 	return nodes
 }
 
+function renderContent(selection) {
+	var selection = selection
+	var textNodes = getTextNodesFrom(selection)
+	var uniques = {}
+
+	textNodes.map(item => {
+		if (typeof uniques[item.characters] != 'undefined') {
+			uniques[item.characters].push(item.id)
+		} else {
+			uniques[item.characters] = [item.id]
+		}
+	})
+
+	for (var item in uniques) {
+		orderedUniques.push({ key: item, nodes: uniques[item] })
+	}
+
+	orderedUniques.sort(function(a, b) {
+		var nameA = a.key.toUpperCase()
+		var nameB = b.key.toUpperCase()
+		if (nameA < nameB) {
+			return -1;
+		}
+		if (nameA > nameB) {
+			return 1;
+		}
+		return 0;
+	})
+
+	var message = { type: 'render', uniques: orderedUniques }
+	figma.ui.postMessage(message)
+}
+
 if (figma.currentPage.selection.length === 0){
 	figma.showUI(__html__, { width: 320, height: 80 })
 	var message = { type: 'empty' }
 	figma.ui.postMessage(message)
 } else {
 	figma.showUI(__html__, { width: 320, height: 528 })
+	renderContent(initialSelection)
+
 	figma.ui.onmessage = msg => {
-		if (msg.type === 'pluginReady') {
-			var selection = figma.currentPage.selection
-			var textNodes = getTextNodesFrom(selection)
-			var uniques = {}
-
-			textNodes.map(item => {
-				if (typeof uniques[item.characters] != 'undefined') {
-					uniques[item.characters].push(item.id)
-				} else {
-					uniques[item.characters] = [item.id]
-				}
-			})
-
-			for (var item in uniques) {
-				orderedUniques.push({ key: item, nodes: uniques[item] })
-			}
-
-			orderedUniques.sort(function(a, b) {
-				var nameA = a.key.toUpperCase()
-				var nameB = b.key.toUpperCase()
-				if (nameA < nameB) {
-					return -1;
-				}
-				if (nameA > nameB) {
-					return 1;
-				}
-				return 0;
-			})
-
-			var message = { type: 'render', uniques: orderedUniques }
-			figma.ui.postMessage(message)
-		}
-
 		if (msg.type === 'previewNodes') {
 			var idx = msg.options
 			var nodes = orderedUniques[idx].nodes
@@ -80,6 +82,7 @@ if (figma.currentPage.selection.length === 0){
 
 		if (msg.type === 'uniqueMatch') {
 			var replacement = msg.options
+			var alertOnce = false
 			previewNodes.forEach(node => {
 				var font = null
 				if (typeof node.fontName != 'symbol') {
@@ -87,8 +90,10 @@ if (figma.currentPage.selection.length === 0){
 					figma.loadFontAsync(font).then(() => {
 						node.characters = replacement
 					})
-				} else {
-					alert('Mixed content: Content Buddy cannot modify text layers with mixed font properties.')
+				} else
+				if (!alertOnce) {
+					alertOnce = true
+					alert('Content Buddy cannot modify text layers with mixed font properties.')
 				}
 			})
 		}
