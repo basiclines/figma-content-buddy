@@ -1,5 +1,3 @@
-var MIN_HEIGHT = 480
-var MAX_HEIGHT = 580
 var orderedUniques = []
 var previewNodes = []
 var initialSelection = figma.currentPage.selection.slice(0)
@@ -20,75 +18,80 @@ function getTextNodesFrom(selection) {
 	return nodes
 }
 
-figma.showUI(__html__, { width: 320, height: MAX_HEIGHT });
+if (figma.currentPage.selection.length === 0){
+	figma.showUI(__html__, { width: 320, height: 80 })
+	var message = { type: 'empty' }
+	figma.ui.postMessage(message)
+} else {
+	figma.showUI(__html__, { width: 320, height: 528 })
+	figma.ui.onmessage = msg => {
+		if (msg.type === 'pluginReady') {
+			var selection = figma.currentPage.selection
+			var textNodes = getTextNodesFrom(selection)
+			var uniques = {}
 
-figma.ui.onmessage = msg => {
+			textNodes.map(item => {
+				if (typeof uniques[item.characters] != 'undefined') {
+					uniques[item.characters].push(item.id)
+				} else {
+					uniques[item.characters] = [item.id]
+				}
+			})
 
-	if (msg.type === 'pluginReady') {
-		var selection = figma.currentPage.selection
-		var textNodes = getTextNodesFrom(selection)
-		var uniques = {}
-
-		textNodes.map(item => {
-			if (typeof uniques[item.characters] != 'undefined') {
-				uniques[item.characters].push(item.id)
-			} else {
-				uniques[item.characters] = [item.id]
+			for (var item in uniques) {
+				orderedUniques.push({ key: item, nodes: uniques[item] })
 			}
-		})
 
-		for (var item in uniques) {
-			orderedUniques.push({ key: item, nodes: uniques[item] })
+			orderedUniques.sort(function(a, b) {
+				var nameA = a.key.toUpperCase()
+				var nameB = b.key.toUpperCase()
+				if (nameA < nameB) {
+					return -1;
+				}
+				if (nameA > nameB) {
+					return 1;
+				}
+				return 0;
+			})
+
+			var message = { type: 'render', uniques: orderedUniques }
+			figma.ui.postMessage(message)
 		}
 
-		orderedUniques.sort(function(a, b) {
-			var nameA = a.key.toUpperCase()
-			var nameB = b.key.toUpperCase()
-			if (nameA < nameB) {
-				return -1;
-			}
-			if (nameA > nameB) {
-				return 1;
-			}
-			return 0;
-		})
+		if (msg.type === 'previewNodes') {
+			var idx = msg.options
+			var nodes = orderedUniques[idx].nodes
+			previewNodes = nodes.reduce((buffer, item) => {
+				 buffer.push(figma.getNodeById(item))
+				 return buffer
+			}, [])
+			figma.viewport.scrollAndZoomIntoView(previewNodes)
+			figma.currentPage.selection = previewNodes
+		}
 
-		var message = { type: 'render', uniques: orderedUniques }
-		figma.ui.postMessage(message)
-	}
+		if (msg.type === 'restoreSelection') {
+			figma.viewport.scrollAndZoomIntoView(initialSelection)
+			figma.currentPage.selection = initialSelection
+		}
 
-	if (msg.type === 'previewNodes') {
-		var idx = msg.options
-		var nodes = orderedUniques[idx].nodes
-		previewNodes = nodes.reduce((buffer, item) => {
-			 buffer.push(figma.getNodeById(item))
-			 return buffer
-		}, [])
-		figma.viewport.scrollAndZoomIntoView(previewNodes)
-		figma.currentPage.selection = previewNodes
-	}
+		if (msg.type === 'freeMatch') {
 
-	if (msg.type === 'restoreSelection') {
-		figma.viewport.scrollAndZoomIntoView(initialSelection)
-		figma.currentPage.selection = initialSelection
-	}
+		}
 
-	if (msg.type === 'freeMatch') {
-
-	}
-
-	if (msg.type === 'uniqueMatch') {
-		var replacement = msg.options
-		previewNodes.forEach(node => {
-			var font = null
-			if (typeof node.fontName != 'symbol') {
-				font = node.fontName
-				figma.loadFontAsync(font).then(() => {
-					node.characters = replacement
-				})
-			} else {
-				alert('Mixed content: Content Buddy cannot modify text layers with mixed font properties.')
-			}
-		})
+		if (msg.type === 'uniqueMatch') {
+			var replacement = msg.options
+			previewNodes.forEach(node => {
+				var font = null
+				if (typeof node.fontName != 'symbol') {
+					font = node.fontName
+					figma.loadFontAsync(font).then(() => {
+						node.characters = replacement
+					})
+				} else {
+					alert('Mixed content: Content Buddy cannot modify text layers with mixed font properties.')
+				}
+			})
+		}
 	}
 }
+
