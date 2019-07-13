@@ -15,10 +15,10 @@
 	.search { display: block; position: relative; }
 	.search .icon { position: absolute; left: 0; top: -1px; }
 	.search .input { text-indent: 24px; }
-	.list { max-height: 300px; overflow: auto; background: #F5F5F5; margin: 16px -16px 0; border: solid 1px #D5D5D5; border-left: none; border-right: none; }
+	.list { height: 300px; overflow: auto; margin: 16px -16px 0; padding-bottom: 16px; border-bottom: solid 1px #D5D5D5; }
 	.item { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; cursor: pointer; padding: 0 16px; }
 	.item * { pointer-events: none; }
-	.item .icon { flex-shrink: 0; opacity: 0; margin-right: 8px; }
+	.item .icon { flex-shrink: 0; opacity: 0; margin-right: 0px; }
 	.item p { margin-bottom: 0; padding: 4px 0; }
 
 	.item:hover { background: rgba(72, 159, 244, 0.2); }
@@ -48,10 +48,10 @@
 		</fieldset>
 
 		<fieldset id="unique_match">
-			<p class="type type--11-pos-bold">Select your unique content</p>
+			<p class="type type--11-pos-bold">Select your content</p>
 			<label class="search">
 				<div class="icon icon--search"></div>
-				<input id="query" type="text" class="input" placeholder="Search uniques">
+				<input id="query" type="text" class="input" placeholder="Search content">
 			</label>
 			<ul class="list" id="uniques"></ul>
 		</fieldset>
