@@ -56,7 +56,7 @@ if (figma.currentPage.selection.length === 0){
 	var message = { type: 'empty' }
 	figma.ui.postMessage(message)
 } else {
-	figma.showUI(__html__, { width: 320, height: 528 })
+	figma.showUI(__html__, { width: 320, height: 544 })
 	renderContent(initialSelection)
 
 	figma.ui.onmessage = msg => {
