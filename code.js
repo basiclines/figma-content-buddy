@@ -89,6 +89,7 @@ if (figma.currentPage.selection.length === 0){
 					font = node.fontName
 					figma.loadFontAsync(font).then(() => {
 						node.characters = replacement
+						figma.ui.postMessage({ type: 'replaced', replacement: replacement })
 						figma.notify(`Replaced ${previewNodes.length} layers`)
 					})
 				} else
