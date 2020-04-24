@@ -1,7 +1,7 @@
 {
-  "name": "Content Buddy",
-	"id": "731260490045684148",
-  "api": "1.0.0",
-  "ui": "ui.html",
-  "main": "code.js"
+    "name": "Content Buddy",
+    "id": "731260490045684148",
+    "api": "1.0.0",
+    "ui": "dist/ui.html",
+    "main": "dist/core.js"
 }

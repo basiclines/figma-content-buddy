@@ -1,0 +1,110 @@
+/**
+ * Bulletproof
+ * All base styles that we need to normalize the starting point for cross-browser development.
+ */
+
+
+/*Base font */
+html { min-height: 100%; position: relative; overflow-x: hidden; }
+body { margin: 0; padding: 0;  text-align: center; vertical-align: middle; overflow-x: hidden; }
+
+
+/* Text conventions */
+h1, h2, h3, h4, h5, h6 { margin: 0; padding: 0; font-weight: normal; }
+ul, ol, dl, dt, dd { padding: 0; margin: 0; list-style-type: none; }
+p, li {
+	word-wrap: break-word;
+	margin: 0;
+	padding: 0;
+}
+q { quotes: none; display: block; }
+pre, blockquote { padding: 0; margin: 0; }
+em { font-style: italic; }
+address { font-style: normal; display: inline; }
+abbr, acronym { cursor: help; border: none; }
+
+
+/* Headings */
+h2 { font-weight: bold; }
+
+
+/* Links */
+a { text-decoration: none; outline: none; }
+a:hover { text-decoration: underline; }
+a img { border: none; }
+a abbr { cursor: pointer; }
+
+
+/* Tables */
+table { border-collapse: collapse; border-spacing: 0; width: 100%; }
+td { vertical-align: top; }
+caption, th { text-align: left; }
+
+
+/* Forms */
+form { margin: 0; }
+fieldset { margin: 0; padding: 0; border: none; }
+legend { padding: 0; display: block; }
+
+button { height: auto; width: auto; overflow: visible; display: inline-block; vertical-align: middle; background: none; border: none; outline: none; white-space: nowrap; cursor: pointer; }
+button::-moz-focus-inner { padding: 0; border: none; }
+
+input, textarea, select, button { margin: 0; padding: 0; vertical-align: middle; }
+input:focus, textarea:focus { outline: none!important; }
+textarea { resize: none; overflow: auto; }
+
+input[type="text"],
+input[type="email"],
+input[type="number"],
+textarea {  }
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="number"]:focus,
+textarea:focus {  }
+
+input:invalid { box-shadow: none; }
+input:-moz-submit-invalid { box-shadow: none; }
+input:-moz-ui-invalid { box-shadow:none; }
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance:textfield; }
+
+[contenteditable] { outline: none; word-wrap: break-word; }
+textarea::-webkit-input-placeholder,
+input::-webkit-input-placeholder { color: inherit; opacity: 1; }
+
+textarea::-moz-placeholder,
+input::-moz-placeholder { color: inherit; opacity: 1; }
+
+textarea:focus::-webkit-input-placeholder,
+input:focus::-webkit-input-placeholder { color: inherit; }
+
+textareafir:focus::-moz-placeholder,
+input:focus::-moz-placeholder { color: inherit; }
+
+input:-webkit-autofill {
+	-webkit-box-shadow: 0 0 0 50px white inset;
+	-webkit-text-fill-color: inherit;
+}
+input:-webkit-autofill:focus {
+	-webkit-box-shadow: 0 0 0 50px white inset;
+	-webkit-text-fill-color: inherit;
+}
+
+
+/* Media */
+img { display: block; padding: 0; margin: 0; }
+img:-moz-broken { line-height: inherit; overflow: hidden; }
+
+
+/* HTML 5 */
+article, aside, details, figcaption, figure, footer, header, hgroup,
+menu, nav, section, video, audio, canvas, progress, meter, time
+{ display: block; padding: 0; margin: 0; }
+
+[hidden] { display: none!important; }
+
+/* Clearfix */
+.cf { *zoom: 1; } .cf:before,.cf:after { content: ""; display: table; } .cf:after { clear: both; }

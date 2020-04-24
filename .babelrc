@@ -1,0 +1,7 @@
+{
+  "presets": ["env"],
+  "plugins": [
+    "transform-custom-element-classes",
+    "webpack-alias"
+  ]
+}

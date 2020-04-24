@@ -7,8 +7,8 @@ function getTextNodesFrom(selection) {
 	function childrenIterator(node) {
 		if (node.children) {
 			node.children.forEach(child => {
-			childrenIterator(child)
-		})
+				childrenIterator(child)
+			})
 		} else {
 			if (node.type === 'TEXT') nodes.push({ id: node.id, characters: node.characters })
 		}
@@ -64,8 +64,8 @@ if (figma.currentPage.selection.length === 0){
 			var idx = msg.options
 			var nodes = orderedUniques[idx].nodes
 			previewNodes = nodes.reduce((buffer, item) => {
-				 buffer.push(figma.getNodeById(item))
-				 return buffer
+				buffer.push(figma.getNodeById(item))
+				return buffer
 			}, [])
 			figma.viewport.scrollAndZoomIntoView(previewNodes)
 			figma.currentPage.selection = previewNodes

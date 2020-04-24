@@ -1,0 +1,21 @@
+/* PLUGIN UI */
+* { border: 0; padding: 0; margin: 0; }
+.hidden { display: none!important; }
+form { padding: 16px; }
+fieldset { margin-bottom: 16px; }
+p.type { margin-bottom: 16px; }
+p.type--11-pos-bold { margin-bottom: 8px; }
+
+.search { display: block; position: relative; }
+.search .icon { position: absolute; left: 0; top: -1px; }
+.search .input { text-indent: 24px; }
+.list { height: 300px; overflow: auto; margin: 16px -16px 0; padding-bottom: 16px; border-bottom: solid 1px #D5D5D5; }
+.item { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; cursor: pointer; padding: 0 16px; }
+.item * { pointer-events: none; }
+.item .icon { flex-shrink: 0; opacity: 0; margin-right: 0px; }
+.item p { margin-bottom: 0; padding: 4px 0; }
+
+.item:hover { background: rgba(72, 159, 244, 0.2); }
+.item.empty p { color: #888; font-style: italic; }
+.item.selected p { color: #2C84DB; }
+.item.selected .icon { opacity: 1; }
