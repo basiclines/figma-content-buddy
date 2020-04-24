@@ -1,4 +1,4 @@
-const secrets = require('./secrets_default.json')
+const secrets = require('./secrets.json')
 const webpack = require('webpack')
 const HtmlWebpackInlineSourcePlugin = require('html-webpack-inline-source-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
