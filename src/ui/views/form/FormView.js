@@ -1,5 +1,6 @@
 import './FormView.css'
 import Element from 'leo/element'
+import Tracking from 'src/utils/Tracking'
 
 class FormView extends Element {
 
@@ -40,8 +41,11 @@ class FormView extends Element {
 				} else {
 					uniques.querySelectorAll('.item').forEach(elem => { elem.classList.remove('hidden') })
 				}
-
 			}, 25)
+		})
+
+		query.addEventListener('click', e => {
+			Tracking.track('focusSearch')
 		})
 
 		// Click handlers for unique items
@@ -52,6 +56,7 @@ class FormView extends Element {
 					apply.setAttribute('disabled', '')
 					replace.value = ''
 					parent.postMessage({ pluginMessage: { type: 'restoreSelection', options: {} } }, '*')
+					Tracking.track('unselectContent')
 				} else {
 					var idx = parseInt(e.target.getAttribute('idx'))
 					uniques.querySelectorAll('.selected').forEach(elem => elem.classList.remove('selected'))
@@ -59,6 +64,7 @@ class FormView extends Element {
 					apply.removeAttribute('disabled')
 					replace.value = e.target.querySelector('p').textContent
 					parent.postMessage({ pluginMessage: { type: 'previewNodes', options: idx } }, '*')
+					Tracking.track('selectContent')
 				}
 			}
 		})
@@ -72,11 +78,12 @@ class FormView extends Element {
 				if (replace.value !== '' || replace.value === '' && confirm('Replace with empty content?')) {
 					parent.postMessage({ pluginMessage: { type: 'uniqueMatch', options: replace.value } }, '*')
 					replace.value = ''
+					Tracking.track('clickReplace')
 				}
 			}
 		})
 
-		onmessage = (e) => {
+		window.addEventListener('message', (e) => {
 			var msg = event.data.pluginMessage
 			if (msg.type === 'render') {
 				function elem(item, idx) {
@@ -101,7 +108,7 @@ class FormView extends Element {
 				content.classList.add('hidden')
 				empty.classList.remove('hidden')
 			}
-		}
+		})
 	}
 
 	render() {

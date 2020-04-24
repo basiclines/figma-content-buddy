@@ -1,6 +1,24 @@
+import Tracking from 'src/utils/Tracking'
+
 var orderedUniques = []
 var previewNodes = []
 var initialSelection = figma.currentPage.selection.slice(0)
+
+// Obtain UUID then trigger init event
+figma.clientStorage.getAsync('UUID').then(data => {
+	let UUID = ''
+
+	if (!data) {
+		UUID = Tracking.createUUID()
+		figma.clientStorage.setAsync('UUID', UUID)
+	} else {
+		UUID = data
+	}
+
+	figma.ui.postMessage({ type: 'init', UUID: UUID, selection: initialSelection.length })
+
+})
+
 
 function getTextNodesFrom(selection) {
 	var nodes = []
