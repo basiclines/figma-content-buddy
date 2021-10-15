@@ -29,6 +29,7 @@ function getTextNodesFrom(selection) {
 			})
 		} else {
 			if (node.type === 'TEXT') nodes.push({ id: node.id, characters: node.characters })
+			if (node.type === 'SHAPE_WITH_TEXT') nodes.push({ id: node.id, characters: node.text.characters })
 		}
 	}
 
@@ -103,10 +104,20 @@ if (figma.currentPage.selection.length === 0){
 			var alertOnce = false
 			previewNodes.forEach(node => {
 				var font = null
-				if (typeof node.fontName != 'symbol') {
-					font = node.fontName
+				var wrapperNode = null
+				
+				// Check node types supported in Figma and FigJam files
+				if (node.type === 'TEXT') {
+					wrapperNode = node
+				} else
+				if (node.type === 'SHAPE_WITH_TEXT') {
+					wrapperNode = node.text
+				}
+								
+				if (typeof wrapperNode.fontName != 'symbol') {
+					font = wrapperNode.fontName
 					figma.loadFontAsync(font).then(() => {
-						node.characters = replacement
+						wrapperNode.characters = replacement
 						figma.ui.postMessage({ type: 'replaced', replacement: replacement })
 						figma.notify(`Replaced ${previewNodes.length} layers`)
 					})
