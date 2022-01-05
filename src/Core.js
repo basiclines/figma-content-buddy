@@ -89,6 +89,7 @@ if (figma.currentPage.selection.length === 0){
 	figma.ui.onmessage = msg => {
 		
 		if (msg.type === 'displayImpression') {
+			figma.ui.resize(320, 544+124)
 			figma.clientStorage.setAsync('AD_LAST_SHOWN_DATE', Date.now())
 		}
 		
