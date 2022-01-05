@@ -30,10 +30,12 @@ class DisplayComponent extends Element {
 		
 		let ad = this.data.ad
 		return ` 
-			<img src="${ad.icon}" />
-			<h1>${ad.headline}</h1>
-			<p>${ad.description}</p>
-			<a href="${ad.link}" target="_blank">${this.data.ad.cta}</p>
+			<picture><img src="${ad.icon}" /></picture>
+			<section>
+				<h1>${ad.headline}</h1>
+				<p>${ad.description}</p>
+				<a href="${ad.link}" target="_blank">${this.data.ad.cta}</a>
+			</section>
 		`
 	}
 }

@@ -48,7 +48,7 @@ class DisplayNetwork {
 	
 	checkImpressionAvailability(lastShownDate, ad) {
 		let adInterval = this.getAdInterval(ad)
-		let availableTimeWindow = (!lastShownDate || lastShownDate + adInterval < this.timeStampNow)
+		let availableTimeWindow = (!lastShownDate || lastShownDate + 1000 < this.timeStampNow)
 		
 		return availableTimeWindow
 	}
