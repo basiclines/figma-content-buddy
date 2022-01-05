@@ -17,13 +17,13 @@ class DisplayNetwork {
 		return fetch(this.root, { method: 'GET' })
 	}
 	
-	getAvailableAd(lastShownDate, impressionsCount) {
+	getAvailableAd(lastShownDate) {
 		return new Promise((resolve, reject) => {
 			this.getAds().then(response => {
 				response.json().then(ads => {
 					
 					let availableAds = ads.reduce((prev, current) => {
-						if (this.checkImpressionAvailability(parseInt(lastShownDate), parseInt(impressionsCount), current)) { return current } 
+						if (this.checkImpressionAvailability(parseInt(lastShownDate), current)) { return current } 
 					}, [])
 					
 					resolve(availableAds)
@@ -46,13 +46,11 @@ class DisplayNetwork {
 		return interval
 	}
 	
-	checkImpressionAvailability(lastShownDate, impressionsCount, ad) {
-		console.log(lastShownDate, impressionsCount)
+	checkImpressionAvailability(lastShownDate, ad) {
 		let adInterval = this.getAdInterval(ad)
-		let availableTimeWindow = (!lastShownDate || lastShownDate + adInterval > this.timeStampNow)
-		let availableImpressions = (!impressionsCount || impressionsCount < ad.max_impressions_count)
+		let availableTimeWindow = (!lastShownDate || lastShownDate + adInterval < this.timeStampNow)
 		
-		return (availableTimeWindow && availableImpressions)
+		return availableTimeWindow
 	}
 		
 }

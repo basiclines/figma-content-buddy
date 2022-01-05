@@ -7,13 +7,11 @@ var initialSelection = figma.currentPage.selection.slice(0)
 // Obtain UUID then trigger init event
 Promise.all([
 	figma.clientStorage.getAsync('UUID'),
-	figma.clientStorage.getAsync('AD_LAST_SHOWN_DATE'),
-	figma.clientStorage.getAsync('AD_IMPRESSIONS_COUNT')
+	figma.clientStorage.getAsync('AD_LAST_SHOWN_DATE')
 ]).then(promisesData => {
 	
 	let UUID = promisesData[0]
 	let AD_LAST_SHOWN_DATE = promisesData[1] || Date.now()
-	let AD_IMPRESSIONS_COUNT = promisesData[2] || 0
 
 	if (!UUID) {
 		UUID = Tracking.createUUID()
@@ -24,7 +22,6 @@ Promise.all([
 		type: 'init',
 		UUID: UUID,
 		AD_LAST_SHOWN_DATE: AD_LAST_SHOWN_DATE,
-		AD_IMPRESSIONS_COUNT: AD_IMPRESSIONS_COUNT,
 		selection: initialSelection.length
 	})
 
@@ -93,7 +90,6 @@ if (figma.currentPage.selection.length === 0){
 		
 		if (msg.type === 'displayImpression') {
 			figma.clientStorage.setAsync('AD_LAST_SHOWN_DATE', Date.now())
-			figma.clientStorage.setAsync('AD_IMPRESSIONS_COUNT', msg.impressionsCount+1)			
 		}
 		
 		if (msg.type === 'previewNodes') {

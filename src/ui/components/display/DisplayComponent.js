@@ -7,9 +7,9 @@ class DisplayComponent extends Element {
 	
 	beforeMount() {
 		// avoid display without proper data
-		if (this.attrs.lastshowndate == 'undefined' || this.attrs.impressionscount == 'undefined') return
+		if (this.attrs.lastshowndate == 'undefined') return
 		
-		DisplayNetwork.getAvailableAd(this.attrs.lastshowndate, this.attrs.impressionscount)
+		DisplayNetwork.getAvailableAd(this.attrs.lastshowndate)
 		.then(ad => {
 			// if we have an available ad, then render and display it
 			if (!!ad) {
@@ -22,7 +22,7 @@ class DisplayComponent extends Element {
 	showDisplay() {
 		this.removeAttribute('hidden')		
 		Tracking.track('displayImpression', { campaign: this.data.ad.tracking })
-		parent.postMessage({ pluginMessage: { type: 'displayImpression', impressionsCount: parseInt(this.attrs.impressionscount) } }, '*')
+		parent.postMessage({ pluginMessage: { type: 'displayImpression' } }, '*')
 	}
 	
 	render() {
