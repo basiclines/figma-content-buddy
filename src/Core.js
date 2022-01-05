@@ -5,17 +5,28 @@ var previewNodes = []
 var initialSelection = figma.currentPage.selection.slice(0)
 
 // Obtain UUID then trigger init event
-figma.clientStorage.getAsync('UUID').then(data => {
-	let UUID = ''
+Promise.all([
+	figma.clientStorage.getAsync('UUID'),
+	figma.clientStorage.getAsync('AD_LAST_SHOWN_DATE'),
+	figma.clientStorage.getAsync('AD_IMPRESSIONS_COUNT')
+]).then(promisesData => {
+	
+	let UUID = promisesData[0]
+	let AD_LAST_SHOWN_DATE = promisesData[1] || Date.now()
+	let AD_IMPRESSIONS_COUNT = promisesData[2] || 0
 
-	if (!data) {
+	if (!UUID) {
 		UUID = Tracking.createUUID()
 		figma.clientStorage.setAsync('UUID', UUID)
-	} else {
-		UUID = data
 	}
 
-	figma.ui.postMessage({ type: 'init', UUID: UUID, selection: initialSelection.length })
+	figma.ui.postMessage({
+		type: 'init',
+		UUID: UUID,
+		AD_LAST_SHOWN_DATE: AD_LAST_SHOWN_DATE,
+		AD_IMPRESSIONS_COUNT: AD_IMPRESSIONS_COUNT,
+		selection: initialSelection.length
+	})
 
 })
 
