@@ -1,5 +1,5 @@
 let singleton = null
-const DAILY_INTERVAL = 86400
+const DAILY_INTERVAL = 86400000
 const WEEKLY_INTERVAL = DAILY_INTERVAL*7
 const MONTHLY_INTERVAL = WEEKLY_INTERVAL*4
 
@@ -23,7 +23,7 @@ class DisplayNetwork {
 				response.json().then(ads => {
 					
 					let availableAds = ads.reduce((prev, current) => {
-						if (this.checkImpressionAvailability(lastShownDate, impressionsCount, current)) { return current } 
+						if (this.checkImpressionAvailability(parseInt(lastShownDate), parseInt(impressionsCount), current)) { return current } 
 					}, [])
 					
 					resolve(availableAds)
@@ -47,6 +47,7 @@ class DisplayNetwork {
 	}
 	
 	checkImpressionAvailability(lastShownDate, impressionsCount, ad) {
+		console.log(lastShownDate, impressionsCount)
 		let adInterval = this.getAdInterval(ad)
 		let availableTimeWindow = (!lastShownDate || lastShownDate + adInterval > this.timeStampNow)
 		let availableImpressions = (!impressionsCount || impressionsCount < ad.max_impressions_count)

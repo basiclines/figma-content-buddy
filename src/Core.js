@@ -90,6 +90,12 @@ if (figma.currentPage.selection.length === 0){
 	renderContent(initialSelection)
 
 	figma.ui.onmessage = msg => {
+		
+		if (msg.type === 'displayImpression') {
+			figma.clientStorage.setAsync('AD_LAST_SHOWN_DATE', Date.now())
+			figma.clientStorage.setAsync('AD_IMPRESSIONS_COUNT', msg.impressionsCount+1)			
+		}
+		
 		if (msg.type === 'previewNodes') {
 			var idx = msg.options
 			var nodes = orderedUniques[idx].nodes

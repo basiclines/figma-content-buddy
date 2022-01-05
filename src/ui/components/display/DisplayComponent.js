@@ -1,6 +1,7 @@
 import './DisplayComponent.css'
 import Element from 'src/ui/Element'
 import DisplayNetwork from 'src/utils/DisplayNetwork'
+import Tracking from 'src/utils/Tracking'
 
 class DisplayComponent extends Element {
 	
@@ -10,9 +11,18 @@ class DisplayComponent extends Element {
 		
 		DisplayNetwork.getAvailableAd(this.attrs.lastshowndate, this.attrs.impressionscount)
 		.then(ad => {
-			this.data.ad = ad
-			this.removeAttribute('hidden')
+			// if we have an available ad, then render and display it
+			if (!!ad) {
+				this.data.ad = ad
+				this.showDisplay()
+			}
 		})
+	}
+	
+	showDisplay() {
+		this.removeAttribute('hidden')		
+		Tracking.track('displayImpression', { campaign: this.data.ad.tracking })
+		parent.postMessage({ pluginMessage: { type: 'displayImpression', impressionsCount: parseInt(this.attrs.impressionscount) } }, '*')
 	}
 	
 	render() {
