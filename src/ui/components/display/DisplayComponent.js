@@ -30,6 +30,7 @@ class DisplayComponent extends Element {
 		
 		let ad = this.data.ad
 		return ` 
+			<em>Sponsored</em>
 			<picture><img src="${ad.icon}" /></picture>
 			<section>
 				<h1>${ad.headline}</h1>
