@@ -23,13 +23,22 @@ class DisplayNetwork {
 				response.json().then(ads => {
 					
 					let availableAds = ads.reduce((prev, current) => {
-						if (this.checkImpressionAvailability(parseInt(lastShownDate), current)) { return current } 
+						if (this.checkImpressionAvailability(parseInt(lastShownDate), current)) {
+							prev.push(current)
+						}
+						return prev
 					}, [])
 					
-					resolve(availableAds)
+					resolve(availableAds[this.getRandomInt(0, availableAds.length)])
 				})
 			}).catch(error => console.log('Error getAvailableAd', error))
 		})
+	}
+	
+	getRandomInt(min, max) {
+		min = Math.ceil(min);
+		max = Math.floor(max);
+		return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
 	}
 	
 	getAdInterval(ad) {
