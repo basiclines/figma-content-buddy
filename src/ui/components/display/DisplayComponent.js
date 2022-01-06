@@ -25,6 +25,14 @@ class DisplayComponent extends Element {
 		parent.postMessage({ pluginMessage: { type: 'displayImpression' } }, '*')
 	}
 	
+	bind() {
+		this.addEventListener('click', e => {
+			if (e.target.getAttribute('data-trigger') == 'cta') {
+				Tracking.track('displayClick', { campaign: this.data.ad.tracking })
+			}
+		})
+	}
+	
 	render() {
 		if (!this.data.ad) return
 		
@@ -35,7 +43,7 @@ class DisplayComponent extends Element {
 			<section>
 				<h1>${ad.headline}</h1>
 				<p>${ad.description}</p>
-				<a href="${ad.link}" target="_blank">${this.data.ad.cta}</a>
+				<a data-trigger="cta" href="${ad.link}" target="_blank">${this.data.ad.cta}</a>
 			</section>
 		`
 	}
