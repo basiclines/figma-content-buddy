@@ -38,7 +38,7 @@ class ui extends Element {
 		})
 	}
 	
-	insertDisplay(lastShownDate, impressionsCount) {
+	insertDisplay(lastShownDate) {
 		let elem = document.createElement('c-display')
 		elem.setAttribute('lastshowndate', lastShownDate)
 		elem.setAttribute('hidden', '')				
