@@ -42,6 +42,8 @@ class DisplayNetwork {
 	}
 	
 	getAdInterval(ad) {
+		if (WP_ENV == 'development') return 1000
+		
 		let interval = 0
 		switch (ad.max_impressions_interval) {
 				case 'daily': interval = DAILY_INTERVAL
