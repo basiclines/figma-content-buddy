@@ -2,6 +2,8 @@ import 'src/ui/Bulletproof.css'
 import 'src/App.css'
 import 'src/ui/FigmaUI.css'
 
+
+import AppState from 'src/AppState'
 import Tracking from 'src/utils/Tracking'
 import 'src/ui/views/form/FormView'
 import 'src/ui/components/display/DisplayComponent'
@@ -12,10 +14,26 @@ class ui extends Element {
 	beforeMount() {
 		window.addEventListener('message', (e) => {
 			var msg = event.data.pluginMessage
+			
+			// init events
 			if (msg.type === 'init') {
-				Tracking.setup(WP_AMPLITUDE_KEY, msg.UUID)
+				console.log('init')
+				AppState.setAppInit(msg.UUID)
 				Tracking.track('openPlugin', { selection: msg.selection })
 				this.insertDisplay(msg.AD_LAST_SHOWN_DATE)
+			} else
+			if (msg.type === 'init-empty') {
+				AppState.setAppInit(msg.UUID)
+				AppState.setAppEmptyState()
+				Tracking.track('openPlugin', { selection: msg.selection })
+			}
+			
+			// state trigger events
+			if (msg.type === 'render') {
+				AppState.setAppRenderState(msg.uniques)
+			} else
+			if (msg.type === 'replaced') {
+				AppState.setAppReplacedState(msg.replacement)
 			}
 		})
 	}
@@ -25,6 +43,10 @@ class ui extends Element {
 		elem.setAttribute('lastshowndate', lastShownDate)
 		elem.setAttribute('hidden', '')				
 		this.insertBefore(elem, this.find('v-form'))
+	}
+	
+	removeDisplay() {
+		this.find('c-display').setAttribute('hidden')
 	}
 
 	render() {
