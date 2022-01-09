@@ -45,7 +45,7 @@ class DisplayNetwork {
 		if (WP_ENV == 'development') return 1000
 		
 		let interval = 0
-		switch (ad.max_impressions_interval) {
+		switch (ad.impressions_interval) {
 				case 'daily': interval = DAILY_INTERVAL
 				break;
 				case 'weekly': interval = WEEKLY_INTERVAL

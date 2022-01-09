@@ -3,6 +3,8 @@ import Element from 'src/ui/Element'
 import DisplayNetwork from 'src/utils/DisplayNetwork'
 import Tracking from 'src/utils/Tracking'
 
+const PLUGIN_NAME = 'content_buddy'
+
 class DisplayComponent extends Element {
 	
 	beforeMount() {
@@ -13,6 +15,7 @@ class DisplayComponent extends Element {
 		.then(ad => {
 			// if we have an available ad, then render and display it
 			if (!!ad) {
+				ad.link = ad.link + '?utm_source=figma&utm_medium=partner&utm_campaign='+PLUGIN_NAME
 				this.data.ad = ad
 				this.showDisplay()
 			}
