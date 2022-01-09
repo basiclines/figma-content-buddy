@@ -12,7 +12,7 @@ Promise.all([
 ]).then(promisesData => {
 	
 	let UUID = promisesData[0]
-	let AD_LAST_SHOWN_DATE = promisesData[1] || Date.now()
+	let AD_LAST_SHOWN_DATE = promisesData[1] || 572083200 // initial date, if no date was saved previously
 
 	if (!UUID) {
 		UUID = Tracking.createUUID()
