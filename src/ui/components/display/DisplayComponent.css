@@ -1,0 +1,12 @@
+c-display[hidden] { display: block!important; height: 0; padding: 0 16px; opacity: 0.4; border: none; pointer-events: none; }
+
+c-display { display: block; padding: 8px 16px 16px; background: var(--color-decorator-soft); border-bottom: solid 1px var(--color-decorator-regular); transition: all 0.25s ease-out; }
+c-display picture { position: relative; width: 48px; height: 48px; border-radius: 8px; margin-right: 16px; float: left; overflow: hidden; }
+c-display picture img { width: 100%;  }
+c-display picture:after { content: ""; position: absolute; left: 0; top: 0; right: 0; bottom: 0; border: solid 1px var(--color-decorator-regular); border-radius: 8px; }
+
+c-display section { overflow: hidden; }
+c-display em { display: block; font: var(--type-small-normal); color: var(--color-text-tertiary); margin: 0 0 8px; }
+c-display h1 { font: var(--type-large-bold); line-height: 16px; color: var(--color-text-primary); margin-bottom: 4px; }
+c-display p { font: var(--type-medium-normal); color: var(--color-text-secondary); margin-bottom: 8px; }
+c-display a { font: var(--type-medium-medium); color: var(--color-interactive-positive); }

@@ -1,6 +1,7 @@
 import './FormView.css'
 import Element from 'leo/element'
 import Tracking from 'src/utils/Tracking'
+import AppState from 'src/AppState'
 
 class FormView extends Element {
 
@@ -82,33 +83,40 @@ class FormView extends Element {
 				}
 			}
 		})
-
-		window.addEventListener('message', (e) => {
-			var msg = event.data.pluginMessage
-			if (msg.type === 'render') {
-				function elem(item, idx) {
-					var emptyClass = (item.key == ' ') ? 'empty': '';
-					var text = (item.key == ' ') ? 'Empty layer': item.key;
-					return `
-					<li class="item ${emptyClass}" idx="${idx}" key="${item.key.toLowerCase()}">
-						<div class="icon icon--recent icon--blue"></div>
-						<p class="type type--11-pos" data-render="text">${text}</p>
-					</li>
-				`
-				}
-				uniques.innerHTML = msg.uniques.reduce((buffer, item, idx) =>  buffer += elem(item, idx),'')
-			} else
-			if (msg.type === 'replaced') {
-				let replacement = msg.replacement
-				let node = uniques.querySelector('.selected')
-				node.setAttribute('key', replacement)
-				node.querySelector('[data-render=text]').innerHTML = replacement
-			} else
-			if (msg.type === 'empty') {
-				content.classList.add('hidden')
-				empty.classList.remove('hidden')
-			}
-		})
+		
+		AppState.on('empty', () => { this.displayEmptyState() })
+		AppState.on('render', data => { this.renderUniques(data) })
+		AppState.on('replaced', replacement => { this.replaceUnique(replacement) })
+	}
+	
+	displayEmptyState() {
+		var empty = document.getElementById('empty')
+		var content = document.getElementById('content')
+		content.classList.add('hidden')
+		empty.classList.remove('hidden')
+	}
+	
+	renderUniqueItem(item, idx) {
+		var emptyClass = (item.key == ' ') ? 'empty': '';
+		var text = (item.key == ' ') ? 'Empty layer': item.key;
+		return `
+		<li class="item ${emptyClass}" idx="${idx}" key="${item.key.toLowerCase()}">
+			<div class="icon icon--recent icon--blue"></div>
+			<p class="type type--11-pos" data-render="text">${text}</p>
+		</li>
+	`
+	}
+	
+	renderUniques(data) {
+		let uniques = document.getElementById('uniques')
+		uniques.innerHTML = data.reduce((buffer, item, idx) =>  buffer += this.renderUniqueItem(item, idx),'')
+	}
+	
+	replaceUnique(replacement) {
+		let uniques = document.getElementById('uniques')
+		let node = uniques.querySelector('.selected')
+		node.setAttribute('key', replacement)
+		node.querySelector('[data-render=text]').innerHTML = replacement
 	}
 
 	render() {
