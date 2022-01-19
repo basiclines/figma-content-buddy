@@ -17,13 +17,13 @@ class DisplayNetwork {
 		return fetch(this.root, { method: 'GET' })
 	}
 	
-	getAvailableAd(lastShownDate) {
+	getAvailableAd(lastShownDate, lastShownImpression) {
 		return new Promise((resolve, reject) => {
 			this.getAds().then(response => {
 				response.json().then(ads => {
 					
 					let availableAds = ads.reduce((prev, current) => {
-						if (this.checkImpressionAvailability(parseInt(lastShownDate), current)) {
+						if (this.checkImpressionAvailability(parseInt(lastShownDate), parseInt(lastShownImpression), current)) {
 							prev.push(current)
 						}
 						return prev
@@ -42,28 +42,36 @@ class DisplayNetwork {
 	}
 	
 	getAdInterval(ad) {
-		if (WP_ENV == 'development') return 1000
+		if (WP_ENV == 'development') return 10000
 		
-		let interval = 0
-		switch (ad.impression_interval) {
-				case 'daily': interval = DAILY_INTERVAL
-				break;
-				case 'weekly': interval = WEEKLY_INTERVAL
-				break;
-				case 'monthly': interval = MONTHLY_INTERVAL
-				break;
-		}
-		
-		return interval
+		return parseInt(ad.impression_net_interval)
 	}
 	
-	checkImpressionAvailability(lastShownDate, ad) {
+	checkImpressionAvailability(lastShownDate, lastShownImpression, ad) {
+		
 		let adInterval = this.getAdInterval(ad)
 		let availableTimeWindow = (!lastShownDate || lastShownDate + adInterval < this.timeStampNow)
 		
-		return availableTimeWindow
-	}
+		// Check if the ad is optimised for impression rather than time
+		if (ad.impression_count) {
+			let availableImpression = (lastShownImpression < parseInt(ad.impression_count))
+			
+			if (availableTimeWindow && availableImpression || !availableTimeWindow && availableImpression) {
+				// meanwhile there is impressions left, spend the impression
+				return true
+			} else
+			if (availableTimeWindow && !availableImpression) {
+				// when impressions limit is reached and time window is valid, reset the impression
+				parent.postMessage({ pluginMessage: { type: 'resetImpression' } }, '*')
+				return false
+			} else {
+				return false
+			}
+		} else {
+			return availableTimeWindow
+		}
 		
+	}
 }
 
 export default new DisplayNetwork()

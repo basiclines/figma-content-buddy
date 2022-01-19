@@ -20,7 +20,7 @@ class ui extends Element {
 				console.log('init')
 				AppState.setAppInit(msg.UUID)
 				Tracking.track('openPlugin', { selection: msg.selection })
-				this.insertDisplay(msg.AD_LAST_SHOWN_DATE)
+				this.insertDisplay(msg.AD_LAST_SHOWN_DATE, msg.AD_LAST_SHOWN_IMPRESSION)
 			} else
 			if (msg.type === 'init-empty') {
 				AppState.setAppInit(msg.UUID)
@@ -38,9 +38,10 @@ class ui extends Element {
 		})
 	}
 	
-	insertDisplay(lastShownDate) {
+	insertDisplay(lastShownDate, lastShownImpression) {
 		let elem = document.createElement('c-display')
 		elem.setAttribute('lastshowndate', lastShownDate)
+		elem.setAttribute('lastshownimpression', lastShownImpression)
 		elem.setAttribute('hidden', '')				
 		this.insertBefore(elem, this.find('v-form'))
 	}
