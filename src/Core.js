@@ -97,7 +97,6 @@ Promise.all([
 			}
 			
 			if (msg.type === 'resetImpression') {
-				console.log('resetImpression')	
 				figma.clientStorage.setAsync('AD_LAST_SHOWN_IMPRESSION', 0)
 			}
 			

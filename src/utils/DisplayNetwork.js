@@ -42,7 +42,7 @@ class DisplayNetwork {
 	}
 	
 	getAdInterval(ad) {
-		if (WP_ENV == 'development') return 1000
+		if (WP_ENV == 'development') return 10000
 		
 		return parseInt(ad.impression_net_interval)
 	}
