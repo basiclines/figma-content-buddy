@@ -8,11 +8,13 @@ var initMessage = {}
 // Obtain UUID then trigger init event
 Promise.all([
 	figma.clientStorage.getAsync('UUID'),
-	figma.clientStorage.getAsync('AD_LAST_SHOWN_DATE')
+	figma.clientStorage.getAsync('AD_LAST_SHOWN_DATE'),
+	figma.clientStorage.getAsync('AD_LAST_SHOWN_IMPRESSION')
 ]).then(promisesData => {
 	
 	let UUID = promisesData[0]
 	let AD_LAST_SHOWN_DATE = promisesData[1] || 572083200 // initial date, if no date was saved previously
+	let AD_LAST_SHOWN_IMPRESSION = promisesData[2] || 0 // initial impressions
 
 	if (!UUID) {
 		UUID = Tracking.createUUID()
@@ -23,6 +25,7 @@ Promise.all([
 		type: 'init',
 		UUID: UUID,
 		AD_LAST_SHOWN_DATE: AD_LAST_SHOWN_DATE,
+		AD_LAST_SHOWN_IMPRESSION: AD_LAST_SHOWN_IMPRESSION,
 		selection: initialSelection.length
 	}
 
@@ -90,6 +93,12 @@ Promise.all([
 			if (msg.type === 'displayImpression') {
 				figma.ui.resize(320, 544+124)
 				figma.clientStorage.setAsync('AD_LAST_SHOWN_DATE', Date.now())
+				figma.clientStorage.setAsync('AD_LAST_SHOWN_IMPRESSION', parseInt(AD_LAST_SHOWN_IMPRESSION)+1)
+			}
+			
+			if (msg.type === 'resetImpression') {
+				console.log('resetImpression')	
+				figma.clientStorage.setAsync('AD_LAST_SHOWN_IMPRESSION', 0)
 			}
 			
 			if (msg.type === 'previewNodes') {

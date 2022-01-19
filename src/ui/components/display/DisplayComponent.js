@@ -11,11 +11,11 @@ class DisplayComponent extends Element {
 		// avoid display without proper data
 		if (this.attrs.lastshowndate == 'undefined') return
 		
-		DisplayNetwork.getAvailableAd(this.attrs.lastshowndate)
+		DisplayNetwork.getAvailableAd(this.attrs.lastshowndate, this.attrs.lastshownimpression)
 		.then(ad => {
 			// if we have an available ad, then render and display it
 			if (!!ad) {
-				ad.link = ad.link + '?utm_source=figma&utm_medium=partner&utm_campaign='+PLUGIN_NAME
+				ad.link = ad.link + '&utm_campaign='+PLUGIN_NAME
 				this.data.ad = ad
 				this.showDisplay()
 			}
