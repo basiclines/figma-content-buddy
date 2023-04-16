@@ -1,5 +1,6 @@
 import './SelectComponent.css'
 import Element from 'src/ui/Element'
+import LEOObject from 'leo/object'
 import 'src/ui/icons/IconShow'
 import 'src/ui/icons/IconCheck'
 
@@ -28,7 +29,7 @@ class SelectComponent extends Element {
 			(isSelected) ? item.removeAttribute('selected') : item.setAttribute('selected', '');
 		}
 		this.toggleList()
-		this.dispatchEvent(new CustomEvent('change', { bubbles: true, detail: { value: value, group: group } }))
+		this.dispatchEvent(new CustomEvent('change', { bubbles: true, composed: true, detail: { value: value, group: group } }))
 	}
 
 	onClick(e) {

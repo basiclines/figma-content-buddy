@@ -6,6 +6,10 @@ import AppState from 'src/AppState'
 
 class FormView extends Element {
 
+	get replaceMode() {
+		return this.querySelector('#replace_mode')
+	}
+
 	get AIReplaceModeNode() {
 		return this.querySelector('#ai_replace')
 	}
@@ -112,9 +116,25 @@ class FormView extends Element {
 			}
 		})
 
+		this.replaceMode.addEventListener('change', e => {
+			let mode = e.detail.value
+			AppState.setReplacementMode(mode)
+		})
+
 		AppState.on('empty', () => { this.displayEmptyState() })
 		AppState.on('render', data => { this.renderUniques(data) })
 		AppState.on('replaced', replacement => { this.replaceUnique(replacement) })
+		AppState.on('change:replacementMode', mode => { this.handleReplaceMode(mode) })
+	}
+
+	handleReplaceMode(mode) {
+		if (mode == 'simple') {
+			this.defaultReplaceModeNode.removeAttribute('hidden')
+			this.AIReplaceModeNode.setAttribute('hidden', '')
+		} else if (mode == 'ai') {
+			this.AIReplaceModeNode.removeAttribute('hidden')
+			this.defaultReplaceModeNode.setAttribute('hidden', '')
+		}
 	}
 
 	displayEmptyState() {
@@ -187,8 +207,8 @@ class FormView extends Element {
 				<section class="main-actions">
 					<p class="type type--11-pos-bold">Replacement mode</p>
 					<c-select id="replace_mode">
-						<option selected>Simple replace</option>
-						<option>AI replace</option>
+						<option selected value="simple">Simple replace</option>
+						<option value="ai">AI replace</option>
 					</c-select>
 
 					<fieldset id="default_replace">

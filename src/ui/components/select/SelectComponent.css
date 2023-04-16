@@ -37,6 +37,7 @@ c-select button .c-icon.hover { opacity: 0; position: absolute; right: 4px; top:
 c-select button .c-icon.hover path { fill: var(--color-text-primary); }
 c-select:hover button .c-icon.default { opacity: 0; }
 c-select:hover button .c-icon.hover { opacity: 1; }
+c-select button span { pointer-events: none; }
 
 c-select[reverse] button { flex-direction: row-reverse; padding: 6px 8px 6px 0; }
 c-select[reverse] button .c-icon.default { margin: 0 4px 0 0; }

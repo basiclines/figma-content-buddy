@@ -2,7 +2,8 @@ import Tracking from 'src/utils/Tracking'
 import LEOObject from 'leo/object'
 
 const defaultState = {
-	appInit: false
+	appInit: false,
+	replacementMode: 'default'
 }
 
 let singleton = null
@@ -17,11 +18,11 @@ class AppState extends LEOObject {
 		Tracking.setup(WP_AMPLITUDE_KEY, UUID)
 		this.appInit = true
 	}
-	
+
 	setAppEmptyState() {
 		this.trigger('empty')
 	}
-	
+
 	setAppRenderState(data) {
 		this.trigger('render', data)
 	}
@@ -29,6 +30,11 @@ class AppState extends LEOObject {
 	setAppReplacedState(replacement) {
 		this.trigger('replaced', replacement)
 	}
+
+	setReplacementMode(mode) {
+		this.replacementMode = mode
+	}
+
 }
-	
+
 export default new AppState()
