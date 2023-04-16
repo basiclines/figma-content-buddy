@@ -38,6 +38,22 @@ class FormView extends Element {
 		return this.querySelector('#default_replace')
 	}
 
+	mount() {
+		AppState.setPrompt(this.getPrompt('typos'))
+		this.handleReplaceMode('simple')
+	}
+
+	getPrompt(id) {
+		let prompts = {
+			typos: 'Fix typos on the following text: <TEXT>',
+			translate: 'You are TranslateGPT, an AI assistant to translate text. You follow this instructions: - Do not print any explanation or additional text rather than the translated text. - You keep in the translated text special symbol combinations common in translation software, such as %1, $1, %d, %s, $s, etc. - You use the same voice and tone. - You use the same punctuation marks as the ones provided in the original text, no other punctuation mark should be printed. - Try to keep the same text length with your translation, make use of synonymous to achieve it when needed. - You always try to refer to the user in a close and natural language. - You finish your sentences ommiting full stop (.) unless the original provides it. - If the translation text is the same, print it anyway. - Translate from EN to ES. Now translate: <TEXT>',
+			shorter: 'Make a shorter version of the following text: <TEXT>',
+			longer: 'Make a longer version of the following text: <TEXT>',
+			iterate: 'Create an alternative iteration of the following text: <TEXT>'
+		}
+		return prompts[id]
+	}
+
 	bind() {
 		// PLUGIN UI CONTROLS
 		var empty = document.getElementById('empty')
@@ -121,10 +137,16 @@ class FormView extends Element {
 			AppState.setReplacementMode(mode)
 		})
 
+		this.selectPromptNode.addEventListener('change', e => {
+			let promptId = e.detail.value
+			AppState.setPrompt(this.getPrompt(promptId))
+		})
+
 		AppState.on('empty', () => { this.displayEmptyState() })
 		AppState.on('render', data => { this.renderUniques(data) })
 		AppState.on('replaced', replacement => { this.replaceUnique(replacement) })
 		AppState.on('change:replacementMode', mode => { this.handleReplaceMode(mode) })
+		AppState.on('change:prompt', prompt => { this.printPrompt(prompt) })
 	}
 
 	handleReplaceMode(mode) {
@@ -135,6 +157,10 @@ class FormView extends Element {
 			this.AIReplaceModeNode.removeAttribute('hidden')
 			this.defaultReplaceModeNode.setAttribute('hidden', '')
 		}
+	}
+
+	printPrompt(prompt) {
+		this.promptDetailNode.value = prompt
 	}
 
 	displayEmptyState() {
@@ -221,11 +247,11 @@ class FormView extends Element {
 						<p class="type type--11-pos">Replace your content using one of the available prompts:</p>
 						<section id="select_and_edit_prompt">
 							<c-select id="ai_replace_prompt">
-								<option selected>Fix typos</option>
-								<option>Translate</option>
-								<option>Make it shorter</option>
-								<option>Make it longer</option>
-								<option>Iterate</option>
+								<option selected value="typos">Fix typos</option>
+								<option value="translate">Translate</option>
+								<option value="shorter">Make it shorter</option>
+								<option value="longer">Make it longer</option>
+								<option value="iterate">Iterate</option>
 							</c-select>
 							<textarea id="prompt_detail" class="input"></textarea>
 						</section>

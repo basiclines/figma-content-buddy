@@ -3,7 +3,8 @@ import LEOObject from 'leo/object'
 
 const defaultState = {
 	appInit: false,
-	replacementMode: 'default'
+	replacementMode: 'default',
+	prompt: ''
 }
 
 let singleton = null
@@ -33,6 +34,10 @@ class AppState extends LEOObject {
 
 	setReplacementMode(mode) {
 		this.replacementMode = mode
+	}
+
+	setPrompt(prompt) {
+		this.prompt = prompt
 	}
 
 }
