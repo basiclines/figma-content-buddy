@@ -9,7 +9,7 @@ p.type--11-pos-bold { margin-bottom: 8px; }
 .search { display: block; position: relative; }
 .search .icon { position: absolute; left: 0; top: -1px; }
 .search .input { text-indent: 24px; }
-.list { height: 300px; overflow: auto; margin: 16px -16px 0; padding-bottom: 16px; border-bottom: solid 1px #D5D5D5; }
+.list { height: 256px; overflow: auto; margin: 16px -16px 0; padding-bottom: 16px; border-bottom: solid 1px #D5D5D5; }
 .item { display: flex; flex-direction: row; align-items: center; justify-content: flex-start; cursor: pointer; padding: 0 16px; }
 .item * { pointer-events: none; }
 .item .icon { flex-shrink: 0; opacity: 0; margin-right: 0px; }
@@ -19,3 +19,9 @@ p.type--11-pos-bold { margin-bottom: 8px; }
 .item.empty p { color: #888; font-style: italic; }
 .item.selected p { color: #2C84DB; }
 .item.selected .icon { opacity: 1; }
+
+
+.main-actions p { margin-bottom: 0; padding-left: 8px; }
+.main-actions fieldset { border-top: solid 1px var(--color-decorator-regular); padding-top: 8px; margin-top: 8px; }
+.main-actions button { margin-top: 8px; }
+.main-actions textarea { min-height: 100px; resize: vertical; margin-top: 8px; }

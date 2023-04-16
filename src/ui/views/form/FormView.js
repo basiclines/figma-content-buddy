@@ -6,6 +6,34 @@ import AppState from 'src/AppState'
 
 class FormView extends Element {
 
+	get AIReplaceModeNode() {
+		return this.querySelector('#ai_replace')
+	}
+
+	get selectAndEditPromptNode() {
+		return this.querySelector('#select_and_edit_prompt')
+	}
+
+	get addOpenAITokenNode() {
+		return this.querySelector('#add_openai_token')
+	}
+
+	get OpenAITokenNode() {
+		return this.querySelector('#openai_token')
+	}
+
+	get selectPromptNode() {
+		return this.querySelector('#ai_replace_prompt')
+	}
+
+	get promptDetailNode() {
+		return this.querySelector('#prompt_detail')
+	}
+
+	get defaultReplaceModeNode() {
+		return this.querySelector('#default_replace')
+	}
+
 	bind() {
 		// PLUGIN UI CONTROLS
 		var empty = document.getElementById('empty')
@@ -17,7 +45,6 @@ class FormView extends Element {
 		var uniques = document.getElementById('uniques')
 		var match = document.getElementById('match')
 		var replace = document.getElementById('replace')
-		var apply = document.getElementById('apply')
 
 		// Enable/disable free match
 		check.addEventListener('change', e => {
@@ -72,7 +99,7 @@ class FormView extends Element {
 		})
 
 		// Apply replacements
-		apply.addEventListener('click', e => {
+		this.defaultReplaceModeNode.querySelector('button').addEventListener('click', e => {
 			var free_match = check.checked
 			if (free_match) {
 				parent.postMessage({ pluginMessage: { type: 'freeMatch', options: { match: match.value, replace: replace.value } } }, '*')
@@ -167,25 +194,30 @@ class FormView extends Element {
 					<fieldset id="default_replace">
 						<p class="type type--11-pos-bold">Replace to</p>
 						<input id="replace" type="text" class="input" placeholder="New content">
+						<button type="button" class="button button--primary" disabled>Replace</button>
 					</fieldset>
 
-					<fieldset id="ai_replace">
+					<fieldset id="ai_replace" hidden>
 						<p class="type type--11-pos">Replace your content using one of the available prompts:</p>
-						<c-select id="ai_replace_prompt">
-							<option selected>Fix typos</option>
-							<option>Translate</option>
-							<option>Make it shorter</option>
-							<option>Make it longer</option>
-							<option>Iterate</option>
-						</c-select>
-						<section>
+						<section id="select_and_edit_prompt">
+							<c-select id="ai_replace_prompt">
+								<option selected>Fix typos</option>
+								<option>Translate</option>
+								<option>Make it shorter</option>
+								<option>Make it longer</option>
+								<option>Iterate</option>
+							</c-select>
+							<textarea id="prompt_detail" class="input"></textarea>
+						</section>
+
+						<section id="add_openai_token" hidden>
 							<p class="type type--11-pos-bold">OpenAI Token</p>
 							<p class="type type--11-pos">Tokens are stored locally. <a target="_blank" href="https://help.openai.com/en/articles/6614209-how-do-i-check-my-token-usage">How to obtain a token?</a></p>
 							<input id="openai_token" type="text" class="input" placeholder="Your API token">
 						</section>
+						<button type="button" class="button button--primary">AI Replace</button>
 					</fieldset>
 
-					<button type="button" id="apply" class="button button--primary" disabled>Replace</button>
 				</section>
 			</section>
 		</form>
