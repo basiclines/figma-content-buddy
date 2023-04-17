@@ -14,11 +14,11 @@ class ui extends Element {
 	beforeMount() {
 		window.addEventListener('message', (e) => {
 			var msg = event.data.pluginMessage
-			
+
 			// init events
 			if (msg.type === 'init') {
 				console.log('init')
-				AppState.setAppInit(msg.UUID)
+				AppState.setAppInit(msg.UUID, msg.OPENAI_TOKEN)
 				Tracking.track('openPlugin', { selection: msg.selection })
 				this.insertDisplay(msg.AD_LAST_SHOWN_DATE, msg.AD_LAST_SHOWN_IMPRESSION)
 			} else
@@ -27,7 +27,7 @@ class ui extends Element {
 				AppState.setAppEmptyState()
 				Tracking.track('openPlugin', { selection: msg.selection })
 			}
-			
+
 			// state trigger events
 			if (msg.type === 'render') {
 				AppState.setAppRenderState(msg.uniques)
@@ -37,15 +37,15 @@ class ui extends Element {
 			}
 		})
 	}
-	
+
 	insertDisplay(lastShownDate, lastShownImpression) {
 		let elem = document.createElement('c-display')
 		elem.setAttribute('lastshowndate', lastShownDate)
 		elem.setAttribute('lastshownimpression', lastShownImpression)
-		elem.setAttribute('hidden', '')				
+		elem.setAttribute('hidden', '')
 		this.insertBefore(elem, this.find('v-form'))
 	}
-	
+
 	removeDisplay() {
 		this.find('c-display').setAttribute('hidden')
 	}

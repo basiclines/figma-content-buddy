@@ -22,6 +22,7 @@ p.type--11-pos-bold { margin-bottom: 8px; }
 
 
 .main-actions p { margin-bottom: 0; padding-left: 8px; }
+.main-actions p + p { margin: 8px 0; }
 .main-actions fieldset { border-top: solid 1px var(--color-decorator-regular); padding-top: 8px; margin-top: 8px; }
 .main-actions button { margin-top: 8px; }
 .main-actions textarea { min-height: 100px; resize: vertical; margin-top: 8px; }

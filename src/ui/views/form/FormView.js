@@ -39,17 +39,18 @@ class FormView extends Element {
 	}
 
 	mount() {
-		AppState.setPrompt(this.getPrompt('typos'))
 		this.handleReplaceMode('simple')
+		this.handleAddTokenView('')
+		AppState.setSelectedPrompt(this.getPrompt('typos'))
 	}
 
 	getPrompt(id) {
 		let prompts = {
-			typos: 'Fix typos on the following text: <TEXT>',
-			translate: 'You are TranslateGPT, an AI assistant to translate text. You follow this instructions: - Do not print any explanation or additional text rather than the translated text. - You keep in the translated text special symbol combinations common in translation software, such as %1, $1, %d, %s, $s, etc. - You use the same voice and tone. - You use the same punctuation marks as the ones provided in the original text, no other punctuation mark should be printed. - Try to keep the same text length with your translation, make use of synonymous to achieve it when needed. - You always try to refer to the user in a close and natural language. - You finish your sentences ommiting full stop (.) unless the original provides it. - If the translation text is the same, print it anyway. - Translate from EN to ES. Now translate: <TEXT>',
-			shorter: 'Make a shorter version of the following text: <TEXT>',
-			longer: 'Make a longer version of the following text: <TEXT>',
-			iterate: 'Create an alternative iteration of the following text: <TEXT>'
+			typos: 'Fix typos on the following text: ',
+			translate: 'You are TranslateGPT, an AI assistant to translate text. You follow this instructions:\n- Do not print any explanation or additional text rather than the translated text.\n- You keep in the translated text special symbol combinations common in translation software, such as %1, $1, %d, %s, $s, etc.\n- You use the same voice and tone.\n- You use the same punctuation marks as the ones provided in the original text, no other punctuation mark should be printed.\n- Try to keep the same text length with your translation, make use of synonymous to achieve it when needed.\n- You always try to refer to the user in a close and natural language.\n- You finish your sentences ommiting full stop (.) unless the original provides it.\n- If the translation text is the same, print it anyway.\n- Translate from EN to ES.\nNow translate: ',
+			shorter: 'Make a shorter version of the following text: ',
+			longer: 'Make a longer version of the following text: ',
+			iterate: 'Create an alternative iteration of the following text: '
 		}
 		return prompts[id]
 	}
@@ -139,14 +140,30 @@ class FormView extends Element {
 
 		this.selectPromptNode.addEventListener('change', e => {
 			let promptId = e.detail.value
-			AppState.setPrompt(this.getPrompt(promptId))
+			AppState.setSelectedPrompt(this.getPrompt(promptId))
+		})
+
+		this.addOpenAITokenNode.querySelector('button').addEventListener('click', e => {
+			let token = this.OpenAITokenNode.value
+			AppState.setOpenAIToken(token)
 		})
 
 		AppState.on('empty', () => { this.displayEmptyState() })
 		AppState.on('render', data => { this.renderUniques(data) })
 		AppState.on('replaced', replacement => { this.replaceUnique(replacement) })
 		AppState.on('change:replacementMode', mode => { this.handleReplaceMode(mode) })
-		AppState.on('change:prompt', prompt => { this.printPrompt(prompt) })
+		AppState.on('change:OpenAIToken', token => { this.handleAddTokenView(token) })
+		AppState.on('change:selectedPrompt', prompt => { this.printPrompt(prompt) })
+	}
+
+	handleAddTokenView(token) {
+		if (token == '') {
+			this.addOpenAITokenNode.removeAttribute('hidden')
+			this.selectAndEditPromptNode.setAttribute('hidden', '')
+		} else {
+			this.selectAndEditPromptNode.removeAttribute('hidden')
+			this.addOpenAITokenNode.setAttribute('hidden', '')
+		}
 	}
 
 	handleReplaceMode(mode) {
@@ -244,8 +261,8 @@ class FormView extends Element {
 					</fieldset>
 
 					<fieldset id="ai_replace" hidden>
-						<p class="type type--11-pos">Replace your content using one of the available prompts:</p>
 						<section id="select_and_edit_prompt">
+							<p class="type type--11-pos">Replace your content using one of the available prompts:</p>
 							<c-select id="ai_replace_prompt">
 								<option selected value="typos">Fix typos</option>
 								<option value="translate">Translate</option>
@@ -254,14 +271,15 @@ class FormView extends Element {
 								<option value="iterate">Iterate</option>
 							</c-select>
 							<textarea id="prompt_detail" class="input"></textarea>
+							<button type="button" class="button button--primary">AI Replace</button>
 						</section>
 
 						<section id="add_openai_token" hidden>
-							<p class="type type--11-pos-bold">OpenAI Token</p>
-							<p class="type type--11-pos">Tokens are stored locally. <a target="_blank" href="https://help.openai.com/en/articles/6614209-how-do-i-check-my-token-usage">How to obtain a token?</a></p>
+							<p class="type type--11-pos-bold">Add your OpenAI API Key</p>
+							<p class="type type--11-pos">API Key are stored locally. <br/> <a target="_blank" href="https://help.openai.com/en/articles/6614209-how-do-i-check-my-token-usage">How to obtain an API Key?</a></p>
 							<input id="openai_token" type="text" class="input" placeholder="Your API token">
+							<button type="button" class="button button--primary">Add API Key</button>
 						</section>
-						<button type="button" class="button button--primary">AI Replace</button>
 					</fieldset>
 
 				</section>
