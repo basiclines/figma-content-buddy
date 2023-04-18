@@ -47,10 +47,10 @@ class FormView extends Element {
 	getPrompt(id) {
 		let prompts = {
 			typos: 'Fix typos on the following text: ',
-			translate: 'You are TranslateGPT, an AI assistant to translate text. You follow this instructions:\n- Do not print any explanation or additional text rather than the translated text.\n- You keep in the translated text special symbol combinations common in translation software, such as %1, $1, %d, %s, $s, etc.\n- You use the same voice and tone.\n- You use the same punctuation marks as the ones provided in the original text, no other punctuation mark should be printed.\n- Try to keep the same text length with your translation, make use of synonymous to achieve it when needed.\n- You always try to refer to the user in a close and natural language.\n- You finish your sentences ommiting full stop (.) unless the original provides it.\n- If the translation text is the same, print it anyway.\n- Translate from EN to ES.\nNow translate: ',
-			shorter: 'Make a shorter version of the following text: ',
-			longer: 'Make a longer version of the following text: ',
-			iterate: 'Create an alternative iteration of the following text: '
+			translate: 'You are TranslateGPT, an AI assistant to translate text. You follow this instructions:\n- Do not print any explanation or additional text rather than the translated text.\n- You keep in the translated text special symbol combinations common in translation software, such as %1, $1, %d, %s, $s, ${...}, etc.\n- You use the same voice and tone.\n- You use the same punctuation marks as the ones provided in the original text, no other punctuation mark should be printed.\n- Try to keep the same text length with your translation, make use of synonymous to achieve it when needed.\n- You finish your sentences omitting full stop (.) unless the original text provides it.\n- If the translation text is the same, print it anyway.\n- Translate from EN to ES.\nNow translate: ',
+			shorter: 'Make a shorter (-10%) version  of the following text: ',
+			longer: 'Make a longer (+10%) version of the following text: ',
+			iterate: 'You are CopyWriterGPT, an AI assistant to help make good copywriting. You follow this instructions:\n- You use the same voice and tone as provided.\n- You keep a similar response length as the text provided.\n Now, create an alternative iteration of the following text: '
 		}
 		return prompts[id]
 	}
@@ -124,15 +124,30 @@ class FormView extends Element {
 		})
 
 		// Apply Default replacements
-		this.defaultReplaceModeNode.querySelector('button').addEventListener('click', e => {
+		applyDefault.addEventListener('click', e => {
 			var free_match = check.checked
 			if (free_match) {
 				parent.postMessage({ pluginMessage: { type: 'freeMatch', options: { match: match.value, replace: replace.value } } }, '*')
 			} else {
 				if (replace.value !== '' || replace.value === '' && confirm('Replace with empty content?')) {
 					parent.postMessage({ pluginMessage: { type: 'uniqueMatch', options: replace.value } }, '*')
-					replace.value = ''
 					Tracking.track('clickReplace')
+				}
+			}
+		})
+
+		// Apply AI replacements
+		applyAI.addEventListener('click', e => {
+			var free_match = check.checked
+			if (free_match) {
+				parent.postMessage({ pluginMessage: { type: 'freeMatch', options: { match: match.value, replace: replace.value } } }, '*')
+			} else {
+				if (replace.value !== '' || replace.value === '' && confirm('Replace with empty content?')) {
+					this.requestAIResponse(AppState.selectedPrompt, replace.value).then(response => {
+						parent.postMessage({ pluginMessage: { type: 'uniqueMatch', options: response } }, '*')
+						replace.value = response
+						Tracking.track('clickReplaceAI')
+					})
 				}
 			}
 		})
@@ -158,6 +173,29 @@ class FormView extends Element {
 		AppState.on('change:replacementMode', mode => { this.handleReplaceMode(mode) })
 		AppState.on('change:OpenAIToken', token => { this.handleAddTokenView(token) })
 		AppState.on('change:selectedPrompt', prompt => { this.printPrompt(prompt) })
+	}
+
+	requestAIResponse(prompt, text) {
+		let payload = {
+			model: "text-davinci-003",
+			prompt: prompt+text,
+			max_tokens: 2500,
+			temperature: 0
+		}
+
+		return new Promise((resolve, reject) => {
+			fetch("https://api.openai.com/v1/completions", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${AppState.OpenAIToken}`
+				},
+				body: JSON.stringify(payload)
+			})
+			.then(response => response.json())
+			.then(data => resolve(data.choices[0].text.trim()))
+			.catch(err => reject(err))
+		})
 	}
 
 	handleAddTokenView(token) {
