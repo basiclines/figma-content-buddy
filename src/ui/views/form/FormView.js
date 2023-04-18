@@ -66,6 +66,8 @@ class FormView extends Element {
 		var uniques = document.getElementById('uniques')
 		var match = document.getElementById('match')
 		var replace = document.getElementById('replace')
+		var applyDefault = this.defaultReplaceModeNode.querySelector('button')
+		var applyAI = this.AIReplaceModeNode.querySelector('[data-trigger="applyReplaceAI"]')
 
 		// Enable/disable free match
 		check.addEventListener('change', e => {
@@ -103,7 +105,8 @@ class FormView extends Element {
 			if (e.target.nodeName == 'LI') {
 				if (e.target.classList.contains('selected')) {
 					e.target.classList.remove('selected')
-					apply.setAttribute('disabled', '')
+					applyDefault.setAttribute('disabled', '')
+					applyAI.setAttribute('disabled', '')
 					replace.value = ''
 					parent.postMessage({ pluginMessage: { type: 'restoreSelection', options: {} } }, '*')
 					Tracking.track('unselectContent')
@@ -111,7 +114,8 @@ class FormView extends Element {
 					var idx = parseInt(e.target.getAttribute('idx'))
 					uniques.querySelectorAll('.selected').forEach(elem => elem.classList.remove('selected'))
 					e.target.classList.add('selected')
-					apply.removeAttribute('disabled')
+					applyDefault.removeAttribute('disabled')
+					applyAI.removeAttribute('disabled')
 					replace.value = e.target.querySelector('p').textContent
 					parent.postMessage({ pluginMessage: { type: 'previewNodes', options: idx } }, '*')
 					Tracking.track('selectContent')
@@ -119,7 +123,7 @@ class FormView extends Element {
 			}
 		})
 
-		// Apply replacements
+		// Apply Default replacements
 		this.defaultReplaceModeNode.querySelector('button').addEventListener('click', e => {
 			var free_match = check.checked
 			if (free_match) {
@@ -271,7 +275,7 @@ class FormView extends Element {
 								<option value="iterate">Iterate</option>
 							</c-select>
 							<textarea id="prompt_detail" class="input"></textarea>
-							<button type="button" class="button button--primary">AI Replace</button>
+							<button type="button" class="button button--primary" data-trigger="applyReplaceAI" disabled>AI Replace</button>
 						</section>
 
 						<section id="add_openai_token" hidden>
