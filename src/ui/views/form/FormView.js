@@ -47,10 +47,10 @@ class FormView extends Element {
 	getPrompt(id) {
 		let prompts = {
 			typos: 'Fix typos on the following text: ',
-			translate: 'You are TranslateGPT, an AI assistant to translate text. You follow this instructions:\n- Do not print any explanation or additional text rather than the translated text.\n- You keep in the translated text special symbol combinations common in translation software, such as %1, $1, %d, %s, $s, ${...}, etc.\n- You use the same voice and tone.\n- You use the same punctuation marks as the ones provided in the original text, no other punctuation mark should be printed.\n- Try to keep the same text length with your translation, make use of synonymous to achieve it when needed.\n- You finish your sentences omitting full stop (.) unless the original text provides it.\n- If the translation text is the same, print it anyway.\n- Translate from EN to ES.\nNow translate: ',
-			shorter: 'Make a shorter (-10%) version  of the following text: ',
-			longer: 'Make a longer (+10%) version of the following text: ',
-			iterate: 'You are CopyWriterGPT, an AI assistant to help make good copywriting. You follow this instructions:\n- You use the same voice and tone as provided.\n- You keep a similar response length as the text provided.\n Now, create an alternative iteration of the following text: '
+			translate: 'Translate to EN: ',
+			shorter: 'Make a 10% shorter version  of the following text: ',
+			longer: 'Make a 10% longer version of the following text: ',
+			iterate: 'Create an alternative iteration of the following text keeping the same text length: '
 		}
 		return prompts[id]
 	}
@@ -143,7 +143,7 @@ class FormView extends Element {
 				parent.postMessage({ pluginMessage: { type: 'freeMatch', options: { match: match.value, replace: replace.value } } }, '*')
 			} else {
 				if (replace.value !== '' || replace.value === '' && confirm('Replace with empty content?')) {
-					this.requestAIResponse(AppState.selectedPrompt, replace.value).then(response => {
+					this.requestAIResponse(this.promptDetailNode.value, replace.value).then(response => {
 						parent.postMessage({ pluginMessage: { type: 'uniqueMatch', options: response } }, '*')
 						replace.value = response
 						Tracking.track('clickReplaceAI')
