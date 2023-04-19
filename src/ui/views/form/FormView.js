@@ -46,11 +46,11 @@ class FormView extends Element {
 
 	getPrompt(id) {
 		let prompts = {
-			typos: 'Fix typos on the following text: ',
+			typos: 'Fix typos on the following text, fixed text should use the same language: ',
 			translate: 'Translate to EN: ',
-			shorter: 'Make a 10% shorter version  of the following text: ',
-			longer: 'Make a 10% longer version of the following text: ',
-			iterate: 'Create an alternative iteration of the following text keeping the same text length: '
+			shorter: 'Make a 10% shorter version of the following text, shorter text should use the same language: ',
+			longer: 'Make a 10% longer version of the following text, longer text should use the same language: ',
+			iterate: 'Create an alternative iteration of the following text keeping the same text length and use the same language: '
 		}
 		return prompts[id]
 	}

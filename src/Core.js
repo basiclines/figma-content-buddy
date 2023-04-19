@@ -110,12 +110,10 @@ Promise.all([
 					buffer.push(figma.getNodeById(item))
 					return buffer
 				}, [])
-				figma.viewport.scrollAndZoomIntoView(previewNodes)
 				figma.currentPage.selection = previewNodes
 			}
 
 			if (msg.type === 'restoreSelection') {
-				figma.viewport.scrollAndZoomIntoView(initialSelection)
 				figma.currentPage.selection = initialSelection
 			}
 
