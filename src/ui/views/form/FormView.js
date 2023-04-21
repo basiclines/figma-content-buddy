@@ -143,10 +143,14 @@ class FormView extends Element {
 				parent.postMessage({ pluginMessage: { type: 'freeMatch', options: { match: match.value, replace: replace.value } } }, '*')
 			} else {
 				if (replace.value !== '' || replace.value === '' && confirm('Replace with empty content?')) {
+					applyAI.classList.add('loading')
 					this.requestAIResponse(this.promptDetailNode.value, replace.value).then(response => {
 						parent.postMessage({ pluginMessage: { type: 'uniqueMatch', options: response } }, '*')
 						replace.value = response
+						applyAI.classList.remove('loading')
 						Tracking.track('clickReplaceAI')
+					}).catch(err => {
+						applyAI.classList.remove('loading')
 					})
 				}
 			}
@@ -276,7 +280,7 @@ class FormView extends Element {
 				</fieldset>
 
 				<fieldset id="unique_match">
-					<p class="type type--11-pos-bold">Select your content</p>
+					<p class="type type--11-pos-bold">1. Select your content</p>
 					<label class="search">
 						<div class="icon icon--search"></div>
 						<input id="query" type="text" class="input" placeholder="Search content">
@@ -290,7 +294,7 @@ class FormView extends Element {
 				</fieldset>
 
 				<section class="main-actions">
-					<p class="type type--11-pos-bold">Replacement mode</p>
+					<p class="type type--11-pos-bold">2. Replacement mode</p>
 					<c-select id="replace_mode">
 						<option selected value="simple">Simple replace</option>
 						<option value="ai">AI replace</option>
@@ -304,7 +308,7 @@ class FormView extends Element {
 
 					<fieldset id="ai_replace" hidden>
 						<section id="select_and_edit_prompt">
-							<p class="type type--11-pos">Replace your content using one of the available prompts:</p>
+							<p class="type type--11-pos"><i>Replace your content using one of the available prompts:</i></p>
 							<c-select id="ai_replace_prompt">
 								<option selected value="typos">Fix typos</option>
 								<option value="translate">Translate</option>
