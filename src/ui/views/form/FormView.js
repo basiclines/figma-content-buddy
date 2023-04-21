@@ -319,8 +319,8 @@ class FormView extends Element {
 						<section id="add_openai_token" hidden>
 							<p class="type type--11-pos-bold">Add your OpenAI API Key</p>
 							<p class="type type--11-pos">API Key are stored locally. <br/> <a target="_blank" href="https://help.openai.com/en/articles/6614209-how-do-i-check-my-token-usage">How to obtain an API Key?</a></p>
-							<input id="openai_token" type="text" class="input" placeholder="Your API token">
-							<button type="button" class="button button--primary">Add API Key</button>
+							<input id="openai_token" type="text" class="input" placeholder="Your API key">
+							<button type="button" class="button button--primary">Add API key</button>
 						</section>
 					</fieldset>
 
