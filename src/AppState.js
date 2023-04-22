@@ -4,6 +4,7 @@ import LEOObject from 'leo/object'
 const defaultState = {
 	appInit: false,
 	replacementMode: 'default',
+	selection: [],
 	selectedPrompt: '',
 	OpenAIToken: ''
 }
@@ -32,6 +33,18 @@ class AppState extends LEOObject {
 
 	setAppReplacedState(replacement) {
 		this.trigger('replaced', replacement)
+	}
+
+	addSelection(selection) {
+		this.selection.push(selection)
+	}
+
+	clearSelection(selection) {
+		this.selection = this.selection.filter(item => selection != item)
+	}
+
+	clearAllSelections() {
+		this.selection = defaultState.selection
 	}
 
 	setReplacementMode(mode) {

@@ -113,6 +113,24 @@ Promise.all([
 				figma.currentPage.selection = previewNodes
 			}
 
+			if (msg.type === 'previewMultipleNodes') {
+				var idx = msg.options
+				var length = msg.length
+				var nodes = orderedUniques[idx].nodes
+				console.log('length', length)
+				console.log('nodes idx', idx)
+				console.log('nodes preview', nodes)
+				previewNodes = nodes.reduce((buffer, item) => {
+					buffer.push(figma.getNodeById(item))
+					return buffer
+				}, [])
+				if (length == 1) {
+					figma.currentPage.selection = previewNodes
+				} else {
+					figma.currentPage.selection = figma.currentPage.selection.concat(previewNodes)
+				}
+			}
+
 			if (msg.type === 'restoreSelection') {
 				figma.currentPage.selection = initialSelection
 			}
@@ -146,6 +164,43 @@ Promise.all([
 							wrapperNode.characters = replacement
 							figma.ui.postMessage({ type: 'replaced', replacement: replacement })
 							figma.notify(`Replaced ${previewNodes.length} layers`)
+						})
+					} else
+					if (!alertOnce) {
+						alertOnce = true
+						alert('Content Buddy cannot modify text layers with mixed font properties.')
+					}
+				})
+			}
+
+			if (msg.type === 'multipleMatch') {
+				var original = msg.original
+				var replacement = msg.result
+				var alertOnce = false
+				figma.currentPage.selection.forEach(node => {
+
+					console.log('node', node)
+
+					var font = null
+					var wrapperNode = null
+
+					// Check node types supported in Figma and FigJam files
+					if (node.type === 'TEXT') {
+						wrapperNode = node
+					} else
+					if (node.type === 'SHAPE_WITH_TEXT') {
+						wrapperNode = node.text
+					}
+
+					if (typeof wrapperNode.fontName != 'symbol') {
+						font = wrapperNode.fontName
+						figma.loadFontAsync(font).then(() => {
+							console.log('wrapperNode.characters', wrapperNode.characters +":"+ original)
+							if (wrapperNode.characters == original) {
+								wrapperNode.characters = replacement
+								figma.ui.postMessage({ type: 'replaced', replacement: replacement })
+								figma.notify(`Replaced ${previewNodes.length} layers`)
+							}
 						})
 					} else
 					if (!alertOnce) {

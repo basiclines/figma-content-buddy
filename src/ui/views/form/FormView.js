@@ -103,22 +103,32 @@ class FormView extends Element {
 		// Click handlers for unique items
 		uniques.addEventListener('click', e => {
 			if (e.target.nodeName == 'LI') {
+				var content = e.target.querySelector('p').textContent
+				var idx = parseInt(e.target.getAttribute('idx'))
+
 				if (e.target.classList.contains('selected')) {
 					e.target.classList.remove('selected')
 					applyDefault.setAttribute('disabled', '')
 					applyAI.setAttribute('disabled', '')
 					replace.value = ''
+					AppState.clearSelection(content)
 					parent.postMessage({ pluginMessage: { type: 'restoreSelection', options: {} } }, '*')
 					Tracking.track('unselectContent')
 				} else {
-					var idx = parseInt(e.target.getAttribute('idx'))
-					uniques.querySelectorAll('.selected').forEach(elem => elem.classList.remove('selected'))
+					if (AppState.replacementMode == 'ai') {
+						AppState.addSelection(content)
+						parent.postMessage({ pluginMessage: { type: 'previewMultipleNodes', options: idx, length: AppState.selection.length } }, '*')
+						applyAI.removeAttribute('disabled')
+						Tracking.track('selectContent', { mode: 'ai' })
+					} else {
+						uniques.querySelectorAll('.selected').forEach(elem => elem.classList.remove('selected'))
+						parent.postMessage({ pluginMessage: { type: 'previewNodes', options: idx } }, '*')
+						replace.value = content
+						applyDefault.removeAttribute('disabled')
+						Tracking.track('selectContent', { mode: 'default' })
+					}
+
 					e.target.classList.add('selected')
-					applyDefault.removeAttribute('disabled')
-					applyAI.removeAttribute('disabled')
-					replace.value = e.target.querySelector('p').textContent
-					parent.postMessage({ pluginMessage: { type: 'previewNodes', options: idx } }, '*')
-					Tracking.track('selectContent')
 				}
 			}
 		})
@@ -131,7 +141,7 @@ class FormView extends Element {
 			} else {
 				if (replace.value !== '' || replace.value === '' && confirm('Replace with empty content?')) {
 					parent.postMessage({ pluginMessage: { type: 'uniqueMatch', options: replace.value } }, '*')
-					Tracking.track('clickReplace')
+					Tracking.track('clickReplace', { mode: 'default' })
 				}
 			}
 		})
@@ -142,17 +152,19 @@ class FormView extends Element {
 			if (free_match) {
 				parent.postMessage({ pluginMessage: { type: 'freeMatch', options: { match: match.value, replace: replace.value } } }, '*')
 			} else {
-				if (replace.value !== '' || replace.value === '' && confirm('Replace with empty content?')) {
-					applyAI.classList.add('loading')
-					this.requestAIResponse(this.promptDetailNode.value, replace.value).then(response => {
-						parent.postMessage({ pluginMessage: { type: 'uniqueMatch', options: response } }, '*')
-						replace.value = response
+				applyAI.classList.add('loading')
+				AppState.selection.forEach(content => {
+					console.log('content', content)
+					this.requestAIResponse(this.promptDetailNode.value, content).then(response => {
+						parent.postMessage({ pluginMessage: { type: 'multipleMatch', original: content, result: response } }, '*')
+						AppState.clearAllSelections()
+						AppState.addSelection(response)
 						applyAI.classList.remove('loading')
-						Tracking.track('clickReplaceAI')
 					}).catch(err => {
 						applyAI.classList.remove('loading')
 					})
-				}
+				})
+				Tracking.track('clickReplace', { mode: 'ai' })
 			}
 		})
 
@@ -224,6 +236,7 @@ class FormView extends Element {
 
 	printPrompt(prompt) {
 		this.promptDetailNode.value = prompt
+		Tracking.track('selectPrompt', { prompt: prompt })
 	}
 
 	displayEmptyState() {
