@@ -157,8 +157,6 @@ class FormView extends Element {
 					console.log('content', content)
 					this.requestAIResponse(this.promptDetailNode.value, content).then(response => {
 						parent.postMessage({ pluginMessage: { type: 'multipleMatch', original: content, result: response } }, '*')
-						AppState.clearAllSelections()
-						AppState.addSelection(response)
 						applyAI.classList.remove('loading')
 					}).catch(err => {
 						applyAI.classList.remove('loading')
@@ -185,7 +183,7 @@ class FormView extends Element {
 
 		AppState.on('empty', () => { this.displayEmptyState() })
 		AppState.on('render', data => { this.renderUniques(data) })
-		AppState.on('replaced', replacement => { this.replaceUnique(replacement) })
+		AppState.on('replaced', (state) => { this.replaceUnique(state) })
 		AppState.on('change:replacementMode', mode => { this.handleReplaceMode(mode) })
 		AppState.on('change:OpenAIToken', token => { this.handleAddTokenView(token) })
 		AppState.on('change:selectedPrompt', prompt => { this.printPrompt(prompt) })
@@ -262,11 +260,21 @@ class FormView extends Element {
 		uniques.innerHTML = data.reduce((buffer, item, idx) =>  buffer += this.renderUniqueItem(item, idx),'')
 	}
 
-	replaceUnique(replacement) {
+	replaceUnique(state) {
+		let replacement = state.replacement
+		let original = state.original
 		let uniques = document.getElementById('uniques')
-		let node = uniques.querySelector('.selected')
-		node.setAttribute('key', replacement)
-		node.querySelector('[data-render=text]').innerHTML = replacement
+		let nodes = uniques.querySelectorAll('.selected')
+
+		nodes.forEach(node => {
+			let contentNode = node.querySelector('[data-render=text]')
+			if (contentNode.innerHTML == original || original == '') {
+				node.setAttribute('key', replacement)
+				contentNode.innerHTML = replacement
+				AppState.clearSelection(original)
+				AppState.addSelection(replacement)
+			}
+		})
 	}
 
 	render() {

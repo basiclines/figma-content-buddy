@@ -117,9 +117,6 @@ Promise.all([
 				var idx = msg.options
 				var length = msg.length
 				var nodes = orderedUniques[idx].nodes
-				console.log('length', length)
-				console.log('nodes idx', idx)
-				console.log('nodes preview', nodes)
 				previewNodes = nodes.reduce((buffer, item) => {
 					buffer.push(figma.getNodeById(item))
 					return buffer
@@ -179,8 +176,6 @@ Promise.all([
 				var alertOnce = false
 				figma.currentPage.selection.forEach(node => {
 
-					console.log('node', node)
-
 					var font = null
 					var wrapperNode = null
 
@@ -195,10 +190,9 @@ Promise.all([
 					if (typeof wrapperNode.fontName != 'symbol') {
 						font = wrapperNode.fontName
 						figma.loadFontAsync(font).then(() => {
-							console.log('wrapperNode.characters', wrapperNode.characters +":"+ original)
 							if (wrapperNode.characters == original) {
 								wrapperNode.characters = replacement
-								figma.ui.postMessage({ type: 'replaced', replacement: replacement })
+								figma.ui.postMessage({ type: 'multipleReplaced', replacement: replacement, original: original })
 								figma.notify(`Replaced ${previewNodes.length} layers`)
 							}
 						})

@@ -17,7 +17,6 @@ class ui extends Element {
 
 			// init events
 			if (msg.type === 'init') {
-				console.log('init')
 				AppState.setAppInit(msg.UUID, msg.OPENAI_TOKEN)
 				Tracking.track('openPlugin', { selection: msg.selection })
 				this.insertDisplay(msg.AD_LAST_SHOWN_DATE, msg.AD_LAST_SHOWN_IMPRESSION)
@@ -34,6 +33,9 @@ class ui extends Element {
 			} else
 			if (msg.type === 'replaced') {
 				AppState.setAppReplacedState(msg.replacement)
+			} else
+			if (msg.type === 'multipleReplaced') {
+				AppState.setAppReplacedState(msg.replacement, msg.original)
 			}
 		})
 	}

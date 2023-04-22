@@ -31,8 +31,8 @@ class AppState extends LEOObject {
 		this.trigger('render', data)
 	}
 
-	setAppReplacedState(replacement) {
-		this.trigger('replaced', replacement)
+	setAppReplacedState(replacement, original) {
+		this.trigger('replaced', { replacement: replacement, original: original || '' })
 	}
 
 	addSelection(selection) {
