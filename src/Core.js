@@ -141,7 +141,22 @@ Promise.all([
 			}
 
 			if (msg.type === 'restoreSelection') {
-				figma.currentPage.selection = initialSelection
+				let filteredSelection = figma.currentPage.selection.filter(node => {
+					var wrapperNode = null
+
+					// Check node types supported in Figma and FigJam files
+					if (node.type === 'TEXT') {
+						wrapperNode = node
+					} else
+					if (node.type === 'SHAPE_WITH_TEXT') {
+						wrapperNode = node.text
+					}
+
+
+					return (wrapperNode.characters != msg.content)
+				})
+
+				figma.currentPage.selection = (filteredSelection.length == 0) ? initialSelection : filteredSelection;
 			}
 
 			if (msg.type === 'freeMatch') {

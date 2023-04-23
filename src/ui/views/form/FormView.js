@@ -112,7 +112,7 @@ class FormView extends Element {
 					applyAI.setAttribute('disabled', '')
 					replace.value = ''
 					AppState.clearSelection(content)
-					parent.postMessage({ pluginMessage: { type: 'restoreSelection', options: {} } }, '*')
+					parent.postMessage({ pluginMessage: { type: 'restoreSelection', options: idx, content: content } }, '*')
 					Tracking.track('unselectContent')
 				} else {
 					AppState.addSelection(content)
