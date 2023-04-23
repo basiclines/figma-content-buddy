@@ -149,6 +149,7 @@ class FormView extends Element {
 				applyAI.classList.add('loading')
 
 				let ctx = this
+				let selectionSnapshot = AppState.selection.slice()
 				function sequentialIteration(iteration, limit) {
 
 					// Finish iterations
@@ -157,7 +158,8 @@ class FormView extends Element {
 						return
 					}
 
-					let content = AppState.selection[iteration]
+					let content = selectionSnapshot[iteration]
+					console.log('content', content)
 					ctx.requestAIResponse(ctx.promptDetailNode.value, content).then(response => {
 						parent.postMessage({ pluginMessage: { type: 'multipleMatch', original: content, result: response } }, '*')
 						let counter = ++iteration
