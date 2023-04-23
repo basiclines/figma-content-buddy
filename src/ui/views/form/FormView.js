@@ -147,15 +147,29 @@ class FormView extends Element {
 				parent.postMessage({ pluginMessage: { type: 'freeMatch', options: { match: match.value, replace: replace.value } } }, '*')
 			} else {
 				applyAI.classList.add('loading')
-				AppState.selection.forEach(content => {
-					console.log('content', content)
-					this.requestAIResponse(this.promptDetailNode.value, content).then(response => {
+
+				let ctx = this
+				function sequentialIteration(iteration, limit) {
+
+					// Finish iterations
+					if (iteration > limit - 1) {
+						applyAI.classList.remove('loading')
+						return
+					}
+
+					let content = AppState.selection[iteration]
+					ctx.requestAIResponse(ctx.promptDetailNode.value, content).then(response => {
 						parent.postMessage({ pluginMessage: { type: 'multipleMatch', original: content, result: response } }, '*')
-						applyAI.classList.remove('loading')
+						let counter = ++iteration
+						sequentialIteration(counter, limit)
 					}).catch(err => {
-						applyAI.classList.remove('loading')
+						let counter = ++iteration
+						sequentialIteration(counter, limit)
+						console.log('Error fetching AI response: ', err)
 					})
-				})
+				}
+
+				sequentialIteration(0, AppState.selection.length)
 				Tracking.track('clickReplace', { mode: 'ai' })
 			}
 		})
