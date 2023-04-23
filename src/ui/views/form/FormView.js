@@ -163,6 +163,7 @@ class FormView extends Element {
 						let counter = ++iteration
 						sequentialIteration(counter, limit)
 					}).catch(err => {
+						parent.postMessage({ pluginMessage: { type: 'notify', content: 'Error fetching AI response' } }, '*')
 						let counter = ++iteration
 						sequentialIteration(counter, limit)
 						console.log('Error fetching AI response: ', err)

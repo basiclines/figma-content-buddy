@@ -163,6 +163,10 @@ Promise.all([
 
 			}
 
+			if (msg.type === 'notify') {
+				figma.notify(msg.content)
+			}
+
 			if (msg.type === 'savePreference') {
 				figma.clientStorage.setAsync(msg.options.preference, msg.options.value)
 			}
