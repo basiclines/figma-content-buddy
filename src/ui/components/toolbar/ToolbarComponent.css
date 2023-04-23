@@ -1,0 +1,19 @@
+c-toolbar {
+	position: relative;
+	z-index: 5;
+	display: block;
+	padding: 0 16px 0 8px;
+	overflow: hidden;
+	border-bottom: solid 1px var(--color-separator);
+}
+c-toolbar nav, c-toolbar header { overflow: hidden; }
+
+c-toolbar nav ul { display: flex; flex-direction: row; float: left; }
+c-toolbar nav li a {
+	display: block;
+	padding: 12px 8px;
+	font: var(--type-medium-bold);
+	color: var(--color-text-tertiary);
+	transition: 0.05s ease-in color;
+}
+c-toolbar nav .active a, c-toolbar nav li a:hover { color: var(--color-text-primary); text-decoration: none; }
