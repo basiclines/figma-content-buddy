@@ -66,6 +66,7 @@ Promise.all([
 			orderedUniques.push({ key: item, nodes: uniques[item] })
 		}
 
+		// Sort alphabetically
 		orderedUniques.sort(function(a, b) {
 			var nameA = a.key.toUpperCase()
 			var nameB = b.key.toUpperCase()
@@ -73,6 +74,17 @@ Promise.all([
 				return -1;
 			}
 			if (nameA > nameB) {
+				return 1;
+			}
+			return 0;
+		})
+
+		// Sort by length
+		orderedUniques.sort(function(a, b) {
+			if (a.key.length < b.key.length) {
+				return -1;
+			}
+			if (a.key.length > b.key.length) {
 				return 1;
 			}
 			return 0;

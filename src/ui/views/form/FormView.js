@@ -48,7 +48,7 @@ class FormView extends Element {
 		let prompts = {
 			typos: 'Fix typos on the following text, fixed text should use the same language: ',
 			translate: 'Translate to EN: ',
-			shorter: 'Make a 10% shorter version of the following text, shorter text should use the same language: ',
+			shorter: 'Make a slightly shorter version of the following text, use the same language as provided: ',
 			longer: 'Make a 10% longer version of the following text, longer text should use the same language: ',
 			iterate: 'Create an alternative iteration of the following text keeping the same text length and use the same language: '
 		}
@@ -115,19 +115,11 @@ class FormView extends Element {
 					parent.postMessage({ pluginMessage: { type: 'restoreSelection', options: {} } }, '*')
 					Tracking.track('unselectContent')
 				} else {
-					if (AppState.replacementMode == 'ai') {
-						AppState.addSelection(content)
-						parent.postMessage({ pluginMessage: { type: 'previewMultipleNodes', options: idx, length: AppState.selection.length } }, '*')
-						applyAI.removeAttribute('disabled')
-						Tracking.track('selectContent', { mode: 'ai' })
-					} else {
-						uniques.querySelectorAll('.selected').forEach(elem => elem.classList.remove('selected'))
-						parent.postMessage({ pluginMessage: { type: 'previewNodes', options: idx } }, '*')
-						replace.value = content
-						applyDefault.removeAttribute('disabled')
-						Tracking.track('selectContent', { mode: 'default' })
-					}
-
+					AppState.addSelection(content)
+					parent.postMessage({ pluginMessage: { type: 'previewMultipleNodes', options: idx, length: AppState.selection.length } }, '*')
+					applyAI.removeAttribute('disabled')
+					applyDefault.removeAttribute('disabled')
+					Tracking.track('selectContent')
 					e.target.classList.add('selected')
 				}
 			}
@@ -140,7 +132,9 @@ class FormView extends Element {
 				parent.postMessage({ pluginMessage: { type: 'freeMatch', options: { match: match.value, replace: replace.value } } }, '*')
 			} else {
 				if (replace.value !== '' || replace.value === '' && confirm('Replace with empty content?')) {
-					parent.postMessage({ pluginMessage: { type: 'uniqueMatch', options: replace.value } }, '*')
+					AppState.selection.forEach(content => {
+						parent.postMessage({ pluginMessage: { type: 'multipleMatch', original: content, result: replace.value } }, '*')
+					})
 					Tracking.track('clickReplace', { mode: 'default' })
 				}
 			}
